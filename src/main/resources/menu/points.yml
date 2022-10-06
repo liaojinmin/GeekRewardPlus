@@ -1,0 +1,64 @@
+TITLE: '&e累计充值 &e点卷礼包'
+
+TYPE: PlayerPoints
+Layout:
+  - '#########'
+  - '#A B C D#'
+  - '#########'
+
+Bindings:
+  Commands: '累充礼包'
+
+Icons:
+  A:
+    display:
+      mats: BOOK
+      name: "&e累计充值 &c100 &e点卷礼包"
+      packID: 10
+      isValue: 100
+      lore:
+        - "&f礼包内容:"
+        - "&f - 1000 金币"
+        - "&f需要充值 &c100 &f点卷才可领取"
+        - "&f当前充值 &A{points}"
+        - "&f领取状态: {state}"
+    Require:
+      condition: 'not pointsPack *10'
+      action: |-
+        command "money give {player_name} 1000" as console
+        sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1
+      deny: |-
+        sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1
+        if pointsPack *10
+           then tell "你已经领取过这个礼包"
+        else
+           tell "你的充值数量不够!"
+  B:
+    display:
+      mats: BOOK
+      name: "&e累计充值 &c300 &e点卷礼包"
+      packID: "累计300"
+      isValue: 300
+      lore:
+        - "&f礼包内容:"
+        - "&f - 3000 金币"
+        - "&f需要充值 &c300 &f点卷才可领取"
+        - "&f当前充值 &A{points}"
+        - "&f领取状态: {state}"
+    Require:
+      condition: 'not pointsPack *累计300'
+      action: |-
+        command "money give {player_name} 3000" as console
+        sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1
+      deny: |-
+        sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1
+        if pointsPack *累计300
+           then tell "你已经领取过这个礼包"
+        else
+           tell "你的充值数量不够!"
+
+
+  '#':
+    display:
+      mats: BLACK_STAINED_GLASS_PANE
+      name: '&b&l 挡板'

@@ -1,0 +1,64 @@
+TITLE: '&0累计获得 &e金币礼包'
+
+TYPE: Money
+Layout:
+  - '#########'
+  - '#A B C D#'
+  - '#########'
+
+Bindings:
+  Commands: '金币礼包'
+
+Icons:
+  A:
+    display:
+      mats: BOOK
+      name: "&e累计获得 &c100 &e金币礼包"
+      packID: 10
+      isValue: 100
+      lore:
+        - "&f礼包内容:"
+        - "&f - 100 金币"
+        - "&f需要获得 &c100 &f金币才可领取"
+        - "&f当前获得 &A{money}"
+        - "&f领取状态: {state}"
+    Require:
+      condition: 'not moneyPack *10'
+      action: |-
+        command "money give {player_name} 1010" as console
+        sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1
+      deny: |-
+        sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1
+        if moneyPack *10
+           then tell "你已经领取过这个礼包"
+        else
+          tell "你获取的金币不足"
+  B:
+    display:
+      mats: BOOK
+      name: "&e累计获得 &c3000 &e金币礼包"
+      packID: "3000金币"
+      isValue: 3000
+      lore:
+        - "&f礼包内容:"
+        - "&f - 400 金币"
+        - "&f需要获得 &c3000 &f金币才可领取"
+        - "&f当前获得 &A{money}"
+        - "&f领取状态: {state}"
+    Require:
+      condition: 'not moneyPack *3000金币'
+      action: |-
+        command "money give {player_name} 400" as console
+        sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1
+      deny: |-
+        sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1
+        if moneyPack *3000金币
+           then tell "你已经领取过这个礼包"
+        else 
+           tell "你获取的金币不足"
+
+
+  '#':
+    display:
+      mats: BLACK_STAINED_GLASS_PANE
+      name: '&b&l 挡板'

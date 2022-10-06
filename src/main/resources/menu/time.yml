@@ -1,0 +1,62 @@
+TITLE: '&0累计在线时长礼包'
+
+TYPE: OnlineTime
+Layout:
+  - '#########'
+  - '#A B C D#'
+  - '#########'
+
+Bindings:
+  Commands: '在线时长'
+
+Icons:
+  A:
+    display:
+      mats: BOOK
+      name: "&e累计在线 &f一小时 &e礼包"
+      packID: '一小时礼包'
+      isValue: 1h
+      lore:
+        - "&f礼包内容:"
+        - "&f - 100 金币"
+        - "&f当前在线 &A{time}"
+        - "&f领取状态: {state}"
+    Require:
+      condition: 'not timePack *一小时礼包'
+      action: |-
+        command "money give {player_name} 100" as console
+        sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1
+      deny: |-
+        sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1
+        if timePack *一小时礼包
+           then tell "你已经领取过这个礼包"
+        else
+           tell "你的在线时长不够!"
+  B:
+    display:
+      mats: BOOK
+      name: "&e累计在线 &f三小时 &e礼包"
+      packID: '三小时礼包'
+      isValue: 3h
+      lore:
+        - "&f礼包内容:"
+        - "&f - 980 金币"
+        - "&f当前在线 &A{time}"
+        - "&f领取状态: {state}"
+    Require:
+      condition: 'not timePack *三小时礼包'
+      action: |-
+        command "money give {player_name} 9800" as console
+        sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1
+      deny: |-
+        sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1
+        if timePack *三小时礼包
+           then tell "你已经领取过这个礼包"
+        else
+           tell "你的在线时长不够!"
+
+
+  '#':
+    display:
+      mats: BLACK_STAINED_GLASS_PANE
+      name: '&b&l 挡板'
