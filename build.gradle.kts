@@ -26,6 +26,7 @@ taboolib {
             name("PlayerPoints").optional(true)
             name("PlaceholderAPI").optional(true)
             name("Vault").optional(true)
+            name("CMI").optional(true)
         }
     }
 
