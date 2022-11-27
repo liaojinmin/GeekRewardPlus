@@ -1,4 +1,4 @@
-package me.geek.reward.listener.sub
+package me.geek.reward.listener
 
 import org.bukkit.entity.Player
 import taboolib.platform.type.BukkitProxyEvent

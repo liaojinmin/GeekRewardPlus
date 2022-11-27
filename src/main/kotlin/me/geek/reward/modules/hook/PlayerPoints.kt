@@ -18,6 +18,7 @@ class PlayerPoints {
         say("&7软依赖 &fPlayerPoints &7已兼容.")
         (it as PlayerPoints).api
     }
+
     fun getPoints(player: OfflinePlayer): Int {
       return points?.lookAsync(player.uniqueId)?.get(1, TimeUnit.SECONDS) ?: -1
     }

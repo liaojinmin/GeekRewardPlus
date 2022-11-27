@@ -15,6 +15,7 @@ class Placeholder : PlaceholderExpansion() {
     // %GeekReward_money% double
     // %GeekReward_time% Long
     // %GeekReward_time_format% 00d 00h 00m 00s
+
     // %GeekReward_pointsTop_amt_1%
     // %GeekReward_pointsTop_name_1%
     // %GeekReward_moneyTop_amt_1%

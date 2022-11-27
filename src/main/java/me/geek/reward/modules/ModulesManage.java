@@ -3,9 +3,9 @@ package me.geek.reward.modules;
 import me.geek.GeekRewardPlus;
 import me.geek.reward.configuration.ConfigManager;
 import me.geek.reward.database.DataManage;
+import me.geek.reward.modules.hook.ItemsAdder;
 import me.geek.reward.modules.hook.PlayerPoints;
 import me.geek.reward.modules.hook.Vault;
-import me.geek.reward.modules.sub.PlayersData;
 import me.geek.reward.modules.hook.Placeholder;
 import me.geek.reward.utils.Expiry;
 import org.bukkit.Bukkit;
@@ -43,6 +43,11 @@ public final class ModulesManage {
     public static void setPlayerData(@NotNull UUID uuid, @NotNull PlayersData data) {
         PLAYERS_DATA_MAP.put(uuid, data);
     }
+    public static void remPlayerData(@NotNull UUID uuid) {
+        if (PLAYERS_DATA_MAP.get(uuid)!=null) {
+            PLAYERS_DATA_MAP.remove(uuid);
+        }
+    }
 
     /**
      * 获取玩家登录时的时间戳
@@ -63,9 +68,13 @@ public final class ModulesManage {
         return PLAYERS_DATA_MAP;
     }
 
+    public static PlayerPoints points;
+    public static Vault vault;
+    public static ItemsAdder itemsAdder;
     public static void onStart() {
-        new Vault();
-        new PlayerPoints();
+        itemsAdder = new ItemsAdder();
+        vault = new Vault();
+        points = new PlayerPoints();
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             GeekRewardPlus.say("&7软依赖 &fPlaceholderAPI &7已兼容.");
             new Placeholder().register();

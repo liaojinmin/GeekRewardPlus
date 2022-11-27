@@ -6,6 +6,7 @@ import me.geek.reward.menu.sub.Icon
 import me.geek.reward.menu.sub.Micon
 import me.geek.reward.menu.sub.Msession
 import me.geek.reward.menu.sub.Session
+import me.geek.reward.modules.ModulesManage
 import me.geek.reward.utils.HexUtils.colorify
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -170,16 +171,13 @@ object Menu {
         for (icon in micon) {
             if (icon.icon == id) {
                 val itemStack = try {
-                    if (icon.mats.contains(":")) {
-                        val meta = icon.mats.split(":".toRegex()).toTypedArray()
-                        ItemStack(
-                            Material.valueOf(meta[0]), 1, meta[1].toInt()
-                                .toShort()
-                        )
+                    if (icon.mats.contains("IA:" , ignoreCase = true) && ModulesManage.itemsAdder.isHook) {
+                        val meta = icon.mats.split(":")
+                        ModulesManage.itemsAdder.getItem(meta[1])
                     } else {
-                        ItemStack(Material.valueOf(icon.mats), 1)
+                        ItemStack(Material.valueOf(icon.mats))
                     }
-                } catch (ing: IllegalArgumentException) {
+                } catch (ing: java.lang.IllegalArgumentException) {
                     ItemStack(Material.STONE, 1)
                 }
                 val itemMeta = itemStack.itemMeta

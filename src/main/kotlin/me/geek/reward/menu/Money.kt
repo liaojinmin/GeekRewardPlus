@@ -1,4 +1,4 @@
-package me.geek.reward.menu.money
+package me.geek.reward.menu
 
 import me.geek.GeekRewardPlus
 import me.geek.GeekRewardPlus.instance
@@ -6,10 +6,10 @@ import me.geek.reward.configuration.ConfigManager
 import me.geek.reward.kether.sub.KetherAPI.instantKether
 import me.geek.reward.menu.sub.Msession
 import me.geek.reward.menu.sub.Micon
-import me.geek.reward.modules.sub.PlayersData
-import me.geek.reward.menu.Menu
+import me.geek.reward.modules.PlayersData
 import me.geek.reward.modules.ModulesManage
 import me.geek.reward.modules.ModulesManage.getPlayerData
+import me.geek.reward.utils.colorify
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
+import taboolib.platform.compat.replacePlaceholder
 import java.util.*
 import kotlin.system.measureTimeMillis
 
@@ -40,7 +41,7 @@ class Money(
 
     init {
         measureTimeMillis {
-            build(inventory.contents, iCon, msession.stringLayout)
+            build()
             actions()
         }.also {
             GeekRewardPlus.debug("&8加载菜单 &7${msession.session} &8耗时 &7$it &8Ms")
@@ -69,11 +70,8 @@ class Money(
                     for (icon in iCon) {
                         if (icon.icon == id && icon.packID != null) {
                             if (instantKether(player, icon.condition).any as Boolean && playerData.money >= icon.isValue.toDouble()) {
-
-                                build(inventory.contents, iCon, msession.stringLayout)
-
                                 GeekRewardPlus.debug("&8玩家 ${player.name} 尝试获取 ${icon.packID} 条件达成")
-                                instantKether(player, icon.action
+                                instantKether(player, icon.action.colorify()
                                     .replace("{player_name}", player.name)
                                     .replace("{player_uuid}", player.uniqueId.toString()))
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin) {
@@ -93,7 +91,7 @@ class Money(
                                 }
                             } else {
                                 GeekRewardPlus.debug("&8玩家 ${player.name} 尝试获取 ${icon.packID} 未达成条件")
-                                instantKether(player, icon.deny)
+                                instantKether(player, icon.deny.colorify())
                                 return
                             }
                         }
@@ -123,24 +121,29 @@ class Money(
             }
         }, plugin)
     }
-    private fun build(var10: Array<ItemStack>, var20: List<Micon>, var30: String) {
-        for (ic in var20) {
-            if (ic.packID != null) {
-                val index = var30.indexOf(ic.icon)
-                val itemMeta = var10[index].itemMeta
-                if (itemMeta != null) {
-                    var lores = itemMeta.lore!!.joinToString()
+    private fun build() {
+        for ((index, value) in msession.stringLayout.withIndex()) {
+            if (value != ' ') {
+                iCon.forEach { micon ->
+                    if (micon.icon[0] == value) {
+                        val itemMeta = inventory.contents[index].itemMeta
+                        if (itemMeta != null) {
+                            if (itemMeta.hasLore()) {
+                                var lores = itemMeta.lore!!.joinToString().replacePlaceholder(player)
 
-                    lores = if (playerData.Money_key.contains(ic.packID)) {
-                        lores.replace("{state}", ConfigManager.OK, ignoreCase = true)
-                    } else if (playerData.money >= ic.isValue.toDouble()) {
-                        lores.replace("{state}", ConfigManager.YES, ignoreCase = true)
-                    } else {
-                        lores.replace("{state}", ConfigManager.NO, ignoreCase = true)
+                                lores = if (playerData.Money_key.contains(micon.packID)) {
+                                    lores.replace("{state}", ConfigManager.OK, ignoreCase = true)
+                                } else if (playerData.money >= micon.isValue.toDouble()) {
+                                    lores.replace("{state}", ConfigManager.YES, ignoreCase = true)
+                                } else {
+                                    lores.replace("{state}", ConfigManager.NO, ignoreCase = true)
+                                }
+                                lores = lores.replace("{money}", playerData.money.toString(), ignoreCase = true)
+                                itemMeta.lore = lores.split(", ")
+                            }
+                            inventory.contents[index].itemMeta = itemMeta
+                        }
                     }
-                    lores = lores.replace("{money}", playerData.money.toString(), ignoreCase = true)
-                    itemMeta.lore = lores.split(", ")
-                    var10[index].itemMeta = itemMeta
                 }
             }
         }

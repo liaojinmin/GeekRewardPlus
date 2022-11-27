@@ -5,11 +5,12 @@ import me.geek.GeekRewardPlus
 import me.geek.GeekRewardPlus.say
 import me.geek.reward.configuration.RewardFiles
 import me.geek.reward.database.migrator
+import me.geek.reward.database.migratorYml
 import me.geek.reward.kether.sub.KetherAPI
 import me.geek.reward.menu.Menu
-import me.geek.reward.menu.money.Money
-import me.geek.reward.menu.points.Points
-import me.geek.reward.menu.time.Time
+import me.geek.reward.menu.Money
+import me.geek.reward.menu.Points
+import me.geek.reward.menu.Time
 import me.geek.reward.modules.ModulesManage
 import me.geek.reward.modules.ModulesManage.expiry
 import org.bukkit.Bukkit
@@ -22,6 +23,7 @@ import taboolib.common.platform.function.console
 
 import taboolib.expansion.createHelper
 import taboolib.module.lang.sendLang
+import taboolib.platform.util.sendLang
 
 
 /**
@@ -36,22 +38,26 @@ object CmdHeader {
     val migrator = subCommand {
         // geekRw migrator <>
         dynamic("目标数据库") {
-            suggestion<CommandSender>(uncheck = true) { _, _ ->
-                listOf("目标数据库")
+            suggestion<CommandSender>{ _, _ ->
+                listOf("目标数据库","目标文件夹")
             }
             execute<CommandSender> { _, context, _ ->
-                val value = Joiner.on(",").join(context.args()).split(",")
-                migrator(value[1])
+                val data = context.args()[1].split(" ")
+                if (data[0] == "目标数据库") {
+                    migrator(data[1])
+                } else {
+                    say(data[1])
+                    migratorYml(data[1])
+                }
             }
         }
     }
 
     @CommandBody(permission = "GeekRewardPlus.admin")
     val reload = subCommand {
-            execute<CommandSender> { _, _, _ ->
-                RewardFiles.reloadAll()
-            }
-
+        execute<CommandSender> { _, _, _ ->
+            RewardFiles.reloadAll()
+        }
     }
 
     @CommandBody(permission = "GeekRewardPlus.admin")
@@ -86,7 +92,7 @@ object CmdHeader {
                         listOf("add","take")
                     }
                     dynamic("值") {
-                        execute<CommandSender> { _, context, _ ->
+                        execute<CommandSender> { sender, context, _ ->
                             for (out in context.args()) {
                                 GeekRewardPlus.debug(out)
                             }
@@ -96,26 +102,26 @@ object CmdHeader {
                                 "money" -> {
                                     if (context.args()[3] == "add") {
                                         data.money += context.args()[4].toDouble()
-                                        console().sendLang("Data-Add-value", context.args()[1], "添加", context.args()[4], "累计金币")
+                                        sender.sendLang("Data-Add-value", context.args()[1], "添加", context.args()[4], "累计金币")
                                     }
                                     else {
                                         data.money -= context.args()[4].toDouble()
-                                        console().sendLang("Data-Add-value", context.args()[1], "扣除", context.args()[4], "累计金币")
+                                        sender.sendLang("Data-Add-value", context.args()[1], "扣除", context.args()[4], "累计金币")
                                     }
                                 }
                                 "points" -> if (context.args()[3] == "add") {
                                     data.points += context.args()[4].toInt()
-                                    console().sendLang("Data-Add-value", context.args()[1], "添加", context.args()[4], "累计点券")
+                                    sender.sendLang("Data-Add-value", context.args()[1], "添加", context.args()[4], "累计点券")
                                 } else {
                                     data.points -= context.args()[4].toInt()
-                                    console().sendLang("Data-Add-value", context.args()[1], "扣除", context.args()[4], "累计金币")
+                                    sender.sendLang("Data-Add-value", context.args()[1], "扣除", context.args()[4], "累计金币")
                                 }
                                 "time" -> if (context.args()[3] == "add") {
                                     data.time += expiry.setExpiryMillis(context.args()[4], false)
-                                    console().sendLang("Data-Add-value", context.args()[1], "添加", context.args()[4], "累计在线")
+                                    sender.sendLang("Data-Add-value", context.args()[1], "添加", context.args()[4], "累计在线")
                                 } else {
                                     data.time -= expiry.setExpiryMillis(context.args()[4], false)
-                                    console().sendLang("Data-Add-value", context.args()[1], "扣除", context.args()[4], "累计在线")
+                                    sender.sendLang("Data-Add-value", context.args()[1], "扣除", context.args()[4], "累计在线")
                                 }
                             }
                         }
@@ -125,7 +131,7 @@ object CmdHeader {
         }
     }
 
-    @CommandBody(permission = "GeekRewardPlus.menu")
+    @CommandBody
     val open = subCommand {
         dynamic("菜单名称") {
             suggestion<CommandSender>(uncheck = true) { _, _ ->

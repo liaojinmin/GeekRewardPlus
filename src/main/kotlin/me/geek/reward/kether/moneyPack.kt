@@ -5,7 +5,6 @@ import me.geek.reward.modules.ModulesManage
 import taboolib.library.kether.ParsedAction
 import taboolib.library.kether.QuestContext
 import taboolib.module.kether.KetherParser
-import taboolib.module.kether.ScriptFrame
 import taboolib.module.kether.scriptParser
 import java.util.concurrent.CompletableFuture
 

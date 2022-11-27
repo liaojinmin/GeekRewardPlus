@@ -17,11 +17,12 @@ object VaultListener {
     @SubscribeEvent
     fun onChange(e: AccountEvent) {
         if (e.getisadd()) {
-            val player = Bukkit.getOfflinePlayer(e.getaccountname())
-            val uuid = player.uniqueId
-            val money = e.getamount().toDouble()
-            ModulesManage.getPlayerData(uuid)?.let {
-                it.money = (it.money + money)
+            Bukkit.getPlayer(e.getaccountname())?.let {
+                val uuid = it.uniqueId
+                val money = e.getamount().toDouble()
+                ModulesManage.getPlayerData(uuid)?.let { data ->
+                    data.money = (data.money + money)
+                }
             }
         }
     }

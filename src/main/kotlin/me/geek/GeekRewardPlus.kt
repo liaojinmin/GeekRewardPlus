@@ -60,8 +60,6 @@ object GeekRewardPlus : Plugin() {
         ModulesManage.onStart()
         // 获取所有玩家数据
         ModulesManage.getPlayerData()
-        // 加载菜单
-        Menu.loadMenu()
         //开始计算在线时间
         OnlineTime().calculate()
         // 唤起排行榜任务

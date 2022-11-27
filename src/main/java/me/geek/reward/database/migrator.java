@@ -4,7 +4,7 @@ package me.geek.reward.database;
 import me.geek.reward.configuration.ConfigManager;
 import me.geek.GeekRewardPlus;
 import me.geek.reward.modules.ModulesManage;
-import me.geek.reward.modules.sub.PlayersData;
+import me.geek.reward.modules.PlayersData;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -50,6 +50,7 @@ public final class migrator {
         progressBar(size);
         Classification();
     }
+
 
     private void select_player() {
         GeekRewardPlus.say(" &7获取玩家数据...");
@@ -137,6 +138,7 @@ public final class migrator {
                     }
                 });
             }
+
             if (value.getMoney() != 0) {
                 moneyCache.forEach((pack, values) -> {
                     boolean core = false;

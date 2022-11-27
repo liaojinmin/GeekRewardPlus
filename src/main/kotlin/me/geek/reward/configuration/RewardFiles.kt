@@ -29,8 +29,10 @@ object RewardFiles {
     }
 
     fun reloadAll() {
+        Menu.CloseGui()
         config.reload()
         Menu.loadMenu()
+
     }
 
     private fun saveAll() {

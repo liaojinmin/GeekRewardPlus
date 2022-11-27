@@ -50,7 +50,7 @@ public final class Mysql extends DataAbstract {
                 statement.execute("CREATE TABLE IF NOT EXISTS " + ConfigManager.MYSQL_Player_Data_NAME + " (" +
                         " `id` INT(36) NOT NULL AUTO_INCREMENT, " +
                         " `name` VARCHAR(256) NOT NULL, " +
-                        " `uuid` CHAR(36) NOT NULL DEFAULT '旧数据', " +
+                        " `uuid` CHAR(36) NOT NULL UNIQUE, " +
                         " `points` integer NOT NULL DEFAULT '0', " +
                         " `money` Double NOT NULL DEFAULT '0', " +
                         " `time` BIGINT(20) NOT NULL DEFAULT '0', " +

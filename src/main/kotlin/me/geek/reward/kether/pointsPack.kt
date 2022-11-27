@@ -2,7 +2,6 @@ package me.geek.reward.kether
 
 import me.geek.reward.kether.sub.KetherSub
 import me.geek.reward.modules.ModulesManage
-import me.geek.reward.modules.sub.PlayersData
 import taboolib.library.kether.ParsedAction
 import taboolib.library.kether.QuestContext
 import taboolib.module.kether.KetherParser

@@ -23,7 +23,7 @@ taboolib {
             name("HSDLao_liao")
         }
         dependencies {
-            name("PlayerPoints").optional(false)
+            name("PlayerPoints").optional(true)
             name("PlaceholderAPI").optional(true)
             name("Vault").optional(true)
         }
@@ -44,6 +44,7 @@ repositories {
     maven("https://repo.rosewooddev.io/repository/public/")
     maven("https://repo.opencollab.dev/maven-snapshots/")
     maven("https://jitpack.io")
+    maven("https://maven.pkg.github.com/LoneDev6/API-ItemsAdder")
 }
 
 
@@ -61,6 +62,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.10.9") { isTransitive = false }
     compileOnly("com.github.MilkBowl:VaultAPI:-SNAPSHOT") { isTransitive = false }
     compileOnly("org.black_ixx:playerpoints:3.1.1") { isTransitive = false }
+    compileOnly("com.github.LoneDev6:api-itemsadder:3.2.3c")
     // Libraries
     compileOnly(fileTree("lib"))
 }

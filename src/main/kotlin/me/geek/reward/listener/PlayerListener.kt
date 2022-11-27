@@ -29,8 +29,9 @@ object PlayerListener {
             }
         }
     }
+
     @SubscribeEvent
-    fun onJoin(e: PlayerQuitEvent) {
+    fun onQuit(e: PlayerQuitEvent) {
         val player = e.player
         ModulesManage.getPlayerData(player.uniqueId)?.let {
             Bukkit.getScheduler().scheduleAsyncDelayedTask(GeekRewardPlus.instance) {
@@ -42,5 +43,6 @@ object PlayerListener {
                 ModulesManage.remPlayerTimeMap(player)
             }
         }
+        ModulesManage.remPlayerData(player.uniqueId)
     }
 }

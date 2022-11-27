@@ -14,6 +14,7 @@ import taboolib.common.platform.event.SubscribeEvent
  **/
 object PointsListener {
 
+
     @SubscribeEvent
     fun onChange(e: PlayerPointsChangeEvent) {
         val points = e.change
@@ -22,7 +23,7 @@ object PointsListener {
                 if (it.points <= 0) {
                     it.points = points
                 } else {
-                    it.points = (it.points + points)
+                    it.points+=points
                 }
                 Bukkit.getScheduler().scheduleAsyncDelayedTask(GeekRewardPlus.instance) {
                     ModulesManage.update(it)
@@ -30,4 +31,5 @@ object PointsListener {
             }
         }
     }
+
 }

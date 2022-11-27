@@ -1,4 +1,4 @@
-package me.geek.reward.modules.sub
+package me.geek.reward.modules
 
 import java.util.UUID
 

@@ -29,7 +29,6 @@ data class Icon(
         HexUtils.colorify(obj.getStringList("display.lore").joinToString()).split(", "),
         obj.getString("Require.action", "false")!!,
         obj.getString("Require.deny", "true")!!
-
     )
 
 }

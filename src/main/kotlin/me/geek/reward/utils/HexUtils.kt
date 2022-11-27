@@ -425,3 +425,4 @@ object HexUtils {
 
 fun String.parseRainbow() = HexUtils.parseRainbow(this)
 fun String.parseGradients() = HexUtils.parseGradients(this)
+fun String.colorify() = HexUtils.colorify(this)

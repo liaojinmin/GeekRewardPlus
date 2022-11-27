@@ -1,4 +1,4 @@
-package me.geek.reward.menu.points
+package me.geek.reward.menu
 
 import me.geek.GeekRewardPlus.debug
 import me.geek.GeekRewardPlus.instance
@@ -6,10 +6,10 @@ import me.geek.reward.configuration.ConfigManager
 import me.geek.reward.kether.sub.KetherAPI.instantKether
 import me.geek.reward.menu.sub.Msession
 import me.geek.reward.menu.sub.Micon
-import me.geek.reward.modules.sub.PlayersData
-import me.geek.reward.menu.Menu
+import me.geek.reward.modules.PlayersData
 import me.geek.reward.modules.ModulesManage
 import me.geek.reward.modules.ModulesManage.getPlayerData
+import me.geek.reward.utils.colorify
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -19,7 +19,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
+import taboolib.platform.compat.replacePlaceholder
 import java.util.*
 import kotlin.system.measureTimeMillis
 
@@ -68,9 +68,10 @@ class Points(
 
 
                                 debug("&8玩家 ${player.name} 尝试获取 ${icon.packID} 条件达成")
-                                instantKether(player, icon.action
+                                instantKether(player, icon.action.colorify()
                                     .replace("{player_name}", player.name)
                                     .replace("{player_uuid}", player.uniqueId.toString()))
+
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(instance) {
                                     val packID = icon.packID
                                     if (playerData.Points_key.isNotEmpty()) {
@@ -88,16 +89,15 @@ class Points(
                                 }
                             } else {
                                 debug("&8玩家 ${player.name} 尝试获取 ${icon.packID} 未达成条件")
-                                instantKether(player, icon.deny)
+                                instantKether(player, icon.deny.colorify())
                                 return
                             }
                         }
                     }
                 }
-                /*else {
+                /* else {
                     player.sendMessage(ConfigManager.gui_Click)
                 }
-
                  */
             }
 
@@ -119,24 +119,36 @@ class Points(
         }, instance)
     }
     private fun build() {
-        for (ic in iCon) {
-            if (ic.packID != null) {
-                val index = session.stringLayout.indexOf(ic.icon)
-                val itemMeta = inventory.contents[index].itemMeta
+        for ((index, value) in session.stringLayout.withIndex()) {
+            if (value != ' ') {
+                iCon.forEach { micon ->
+                    if (micon.icon[0] == value) {
+                        val itemMeta = inventory.contents[index].itemMeta
+                        if (itemMeta != null) {
+                            if (itemMeta.hasLore()) {
+                                val list = mutableListOf<String>()
+                                itemMeta.lore!!.forEach {
+                                    when {
+                                        it.contains("{state}") -> {
+                                            list.add(it.replace("{state}", if (playerData.Points_key.contains(micon.packID)) { ConfigManager.OK } else if (playerData.points >= micon.isValue.toInt()) {
+                                                ConfigManager.YES
+                                            } else { ConfigManager.NO }))
+                                        }
+                                        it.contains("{points}") -> list.add(it.replace("{points}", playerData.points.toString()))
+                                        it.contains("{相差}") -> {
+                                            var amt = micon.isValue.toInt() - playerData.points
+                                            if (amt < 0) { amt = 0 }
+                                            list.add(it.replace("{相差}", amt.toString()))
+                                        }
+                                        else -> list.add(it)
+                                    }
+                                }
 
-                if (itemMeta != null) {
-                    var lores = itemMeta.lore!!.joinToString()
-                    lores = if (playerData.Points_key.contains(ic.packID)) {
-                        lores.replace("{state}", ConfigManager.OK, ignoreCase = true)
-                    } else if (playerData.points >= ic.isValue.toInt()) {
-                        lores.replace("{state}", ConfigManager.YES, ignoreCase = true)
-                    } else {
-                        lores.replace("{state}", ConfigManager.NO, ignoreCase = true)
+                                itemMeta.lore = list
+                            }
+                            inventory.contents[index].itemMeta = itemMeta
+                        }
                     }
-                    lores = lores.replace("{points}", playerData.points.toString(), ignoreCase = true)
-
-                    itemMeta.lore = listOf(*lores.split(", ").toTypedArray())
-                    inventory.contents[index].itemMeta = itemMeta
                 }
             }
         }
