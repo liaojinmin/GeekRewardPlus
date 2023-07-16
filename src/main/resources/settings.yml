@@ -1,0 +1,25 @@
+debug: false
+
+data_storage:
+  type: sqlite # sqlite or mysql
+  # 数据库 KEY 模式 高版本、正版服建议 UUID
+  keyModule: UUID
+  mysql:
+    host: '192.168.0.102'
+    port: 3306
+    database: 'testrw'
+    username: 'root'
+    password: 'Liao17303069590'
+    params: '?autoReconnect=true&useSSL=false'
+  hikari_settings:
+    maximum_pool_size: 10
+    minimum_idle: 10
+    maximum_lifetime: 1800000
+    keepalive_time: 0
+    connection_timeout: 5000
+
+
+状态信息:
+  已领取: '&a已领取'
+  可领取: '&a可领取'
+  不可领取: '&c不可领取'

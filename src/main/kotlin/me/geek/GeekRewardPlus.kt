@@ -1,18 +1,15 @@
 package me.geek
 
-import me.geek.reward.configuration.ConfigManager
-import me.geek.reward.database.DataManage
-import me.geek.reward.menu.Menu
-import me.geek.reward.modules.Metrics.Metrics
-import me.geek.reward.modules.ModulesManage
-import me.geek.reward.modules.task.OnlineTime
-import me.geek.reward.modules.task.LocalTop
-import me.geek.reward.utils.HexUtils.colorify
+import me.geek.reward.SetTings
+import me.geek.reward.Placeholder
+import me.geek.reward.api.DataManager
 import org.bukkit.Bukkit
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
+import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.console
+import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 
 /**
@@ -25,75 +22,62 @@ import taboolib.platform.BukkitPlugin
         value = "!com.zaxxer:HikariCP:4.0.3",
         relocate = ["!com.zaxxer.hikari", "!com.zaxxer.hikari_4_0_3_rw"]),
 )
-// MinecraftVersion.majorLegacy
 object GeekRewardPlus : Plugin() {
+
     val instance by lazy { BukkitPlugin.getInstance() }
-    val top by lazy { LocalTop() }
-    const val version = "1.1"
-    val BukkitVersion = Bukkit.getVersion().substringAfter("MC:").filter { it.isDigit() }.toInt()
+
+    const val version = "2.0"
+
     override fun onLoad() {
-        Metrics(instance, 16328)
-        title("")
-        title("正在加载 §3§lGeekRewardPlus  §f...  §8" + Bukkit.getVersion())
-        title("")
+        Metrics(16328, version, Platform.BUKKIT)
+        console().sendMessage("")
+        console().sendMessage("正在加载 §3§lGeekRewardPlus  §f...  §8" + Bukkit.getVersion())
+        console().sendMessage("")
     }
 
     override fun onEnable() {
-        title("")
-        title("  ________               __   __________                                .___")
-        title(" /  _____/  ____   ____ |  | _\\______   \\ ______  _  _______ _______  __| _/")
-        title("/   \\  ____/ __ \\_/ __ \\|  |/ /|       _// __ \\ \\/ \\/ /\\__  \\\\_  __ \\/ __ | ")
-        title("\\    \\_\\  \\  ___/\\  ___/|    < |    |   \\  ___/\\     /  / __ \\|  | \\/ /_/ | ")
-        title(" \\______  /\\___  >\\___  >__|_ \\|____|_  /\\___  >\\/\\_/  (____  /__|  \\____ | ")
-        title("        \\/     \\/     \\/     \\/       \\/     \\/             \\/           \\/ ")
-        title("")
-        title("")
-        title("     §aGeekRewardPlus §bv$version §7by §awww.geekcraft.ink")
-        title("     §8适用于Bukkit: §71.12.2-1.19.2 §8当前: §7" + Bukkit.getName() + BukkitVersion)
-        title("")
-        // 配置文件加载
-        ConfigManager.loadConfig()
-        // 数据库启动
-        DataManage.start()
+        console().sendMessage("")
+        console().sendMessage("  ________               __   __________                                .___")
+        console().sendMessage(" /  _____/  ____   ____ |  | _\\______   \\ ______  _  _______ _______  __| _/")
+        console().sendMessage("/   \\  ____/ __ \\_/ __ \\|  |/ /|       _// __ \\ \\/ \\/ /\\__  \\\\_  __ \\/ __ | ")
+        console().sendMessage("\\    \\_\\  \\  ___/\\  ___/|    < |    |   \\  ___/\\     /  / __ \\|  | \\/ /_/ | ")
+        console().sendMessage(" \\______  /\\___  >\\___  >__|_ \\|____|_  /\\___  >\\/\\_/  (____  /__|  \\____ | ")
+        console().sendMessage("        \\/     \\/     \\/     \\/       \\/     \\/             \\/           \\/ ")
+        console().sendMessage("")
+        console().sendMessage("")
+        console().sendMessage("     §eGeekRewardPlus §bv$version §7by §awww.geekcraft.ink")
+        console().sendMessage("     §8适用于Bukkit: §71.12.x-1.20.x §8当前: §7" + Bukkit.getName())
+        console().sendMessage("")
 
-        // 模块管理初始化
-        ModulesManage.onStart()
-        // 获取所有玩家数据
-        ModulesManage.getPlayerData()
-        // 加载菜单
-        Menu.loadMenu()
-        //开始计算在线时间
-        OnlineTime().calculate()
-        // 唤起排行榜任务
-        top.pointsTop()
-       // LocalTop().pointsTop()
+        // 数据库启动
+        DataManager.start()
+
+        // hook plugin
+        hook()
     }
 
     override fun onDisable() {
-        OnlineTime().saveData()
-        Menu.CloseGui()
-        DataManage.close()
+        DataManager.saveAllData()
+        DataManager.close()
     }
 
-    @JvmStatic
+
+    private fun hook() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            say("&7软依赖 &fPlaceholderAPI &7已兼容.")
+            Placeholder().register()
+        }
+    }
+
+
     fun say(msg: String) {
-        if (BukkitVersion >= 1160)
-            console().sendMessage(colorify("&8[<g#2:#FF00FF:#FFFAFA>GeekRewardPlus&8] &7$msg"))
-        else
-            console().sendMessage("§8[§6GeekReward§ePlus§8] ${msg.replace("&", "§")}")
+        console().sendMessage("§8[§6GeekReward§ePlus§8] ${msg.replace("&", "§")}")
     }
 
-    private fun title(msg: String) {
-        console().sendMessage(msg)
-    }
 
-    @JvmStatic
     fun debug(msg: String) {
-        if(ConfigManager.DeBug) {
-            if (BukkitVersion >= 1160)
-                console().sendMessage(colorify("&8[<g#2:#FF00FF:#FFFAFA>GeekRewardPlus&8] &cDeBug &8| &7$msg"))
-            else
-                console().sendMessage("§8[§6GeekReward§ePlus§8] ${msg.replace("&", "§")}")
+        if (SetTings.deBug) {
+            console().sendMessage("§8[§6GeekReward§ePlus§8]§8[§cDeBug§8]§7 ${msg.replace("&", "§")}")
         }
     }
 }

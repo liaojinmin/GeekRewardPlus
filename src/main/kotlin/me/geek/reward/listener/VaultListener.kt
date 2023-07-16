@@ -1,8 +1,8 @@
 package me.geek.reward.listener
 
-import me.geek.reward.modules.ModulesManage
 import me.yic.xconomy.api.event.AccountEvent
 import com.Zrips.CMI.events.CMIUserBalanceChangeEvent
+import me.geek.reward.api.DataManager
 
 import org.bukkit.Bukkit
 import taboolib.common.platform.event.SubscribeEvent
@@ -10,7 +10,6 @@ import taboolib.common.platform.event.SubscribeEvent
 /**
  * 作者: 老廖
  * 时间: 2022/8/28
- *
  **/
 object VaultListener {
 
@@ -18,20 +17,21 @@ object VaultListener {
     fun onChange(e: AccountEvent) {
         if (e.getisadd()) {
             val player = Bukkit.getOfflinePlayer(e.getaccountname())
-            val uuid = player.uniqueId
             val money = e.getamount().toDouble()
-            ModulesManage.getPlayerData(uuid)?.let {
+            val data = DataManager.getBasicData(player.uniqueId) ?: DataManager.getBasicData(player.name!!)
+            data?.let {
                 it.money = (it.money + money)
             }
         }
     }
+
     @SubscribeEvent
     fun onChange(e: CMIUserBalanceChangeEvent) {
         if (e.actionType == "Deposit") {
-            val uuid = e.user.getUuid()
-            val money = (e.to - e.getFrom())
-            ModulesManage.getPlayerData(uuid)?.let {
-                it.money = (it.money + money)
+            val money = (e.to - e.from)
+            val data = DataManager.getBasicData(e.user.uniqueId) ?: DataManager.getBasicData(e.user.name!!)
+            data?.let {
+                it.money += money
             }
         }
     }

@@ -3,7 +3,7 @@ val taboolibVersion: String by project
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.7.20"
-    id("io.izzel.taboolib") version "1.42"
+    id("io.izzel.taboolib") version "1.56"
 }
 
 taboolib {
@@ -14,7 +14,9 @@ taboolib {
         "module-configuration",
         "module-chat",
         "module-lang",
+        "module-ui",
         "module-kether",
+        "module-metrics",
         "expansion-command-helper"
     )
     description {
@@ -23,16 +25,15 @@ taboolib {
             name("HSDLao_liao")
         }
         dependencies {
-            name("PlayerPoints").optional(false)
+            name("PlayerPoints").optional(true)
             name("PlaceholderAPI").optional(true)
             name("Vault").optional(true)
         }
     }
 
-    relocate("me.Geek", group.toString())
     relocate("com.zaxxer.hikari", "com.zaxxer.hikari_4_0_3_rw")
     classifier = null
-    version = "6.0.9-57"
+    version = "6.0.11-13"
 }
 
 repositories {
@@ -44,6 +45,10 @@ repositories {
     maven("https://repo.rosewooddev.io/repository/public/")
     maven("https://repo.opencollab.dev/maven-snapshots/")
     maven("https://jitpack.io")
+    maven {
+        url = uri("http://ptms.ink:8081/repository/releases/")
+        isAllowInsecureProtocol = true
+    }
 }
 
 

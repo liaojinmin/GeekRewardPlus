@@ -1,7 +1,6 @@
 package me.geek.reward.listener
 
 import me.geek.GeekRewardPlus
-import me.geek.reward.modules.ModulesManage
 import org.bukkit.Bukkit
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -17,22 +16,21 @@ object PlayerListener {
     @SubscribeEvent
     fun onJoin(e: PlayerJoinEvent) {
         val player = e.player
-        // 储存玩家上线时间
-        ModulesManage.setPlayerTimeMap(player, System.currentTimeMillis())
         //判断玩家是否有缓存数据，无则查询或添加默认数据
-        if (ModulesManage.getPlayerData(player.uniqueId) == null) {
+        if (ModulesManage.getPlayerData(player.name) == null) {
             Bukkit.getScheduler().scheduleAsyncDelayedTask(GeekRewardPlus.instance) {
                 val data = ModulesManage.select(player)
                 if (data != null) {
-                    ModulesManage.setPlayerData(player.uniqueId, data)
+                    ModulesManage.setPlayerData(player.name, data)
                 }
             }
         }
     }
+
     @SubscribeEvent
-    fun onJoin(e: PlayerQuitEvent) {
+    fun onQuit(e: PlayerQuitEvent) {
         val player = e.player
-        ModulesManage.getPlayerData(player.uniqueId)?.let {
+        ModulesManage.getPlayerData(player.name)?.let {
             Bukkit.getScheduler().scheduleAsyncDelayedTask(GeekRewardPlus.instance) {
                 // 计算在线时间
                 val timeData = (System.currentTimeMillis() / 1000) - (ModulesManage.getPlayerTimeMap(player) / 1000)
@@ -42,5 +40,6 @@ object PlayerListener {
                 ModulesManage.remPlayerTimeMap(player)
             }
         }
+        ModulesManage.remPlayerData(player.name)
     }
 }
