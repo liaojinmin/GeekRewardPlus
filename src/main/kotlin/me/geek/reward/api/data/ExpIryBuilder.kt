@@ -1,4 +1,4 @@
-package me.geek.reward.api
+package me.geek.reward.api.data
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -65,7 +65,7 @@ class ExpIryBuilder(
             }
         }
         val times = cacheTime
-        var text = ""
+        var text = "0"
         val dd = times / 60 / 60 / 24
         val hh = times / 60 / 60 % 24
         val mm = times / 60 % 60
@@ -101,6 +101,11 @@ class ExpIryBuilder(
 
     fun setMillis(time: Long): ExpIryBuilder {
         this.millis = time
+        return this
+    }
+
+    fun merge(expIryBuilder: ExpIryBuilder): ExpIryBuilder {
+        this.millis += expIryBuilder.millis
         return this
     }
 }

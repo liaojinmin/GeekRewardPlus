@@ -21,12 +21,12 @@ import kotlin.system.measureTimeMillis
 @PlatformSide([Platform.BUKKIT])
 object SetTings {
 
-    @Config(value = "time.yml", autoReload = true)
+    @Config(value = "settings.yml", autoReload = true)
     lateinit var config: ConfigFile
         private set
 
-    @Awake(LifeCycle.ENABLE)
     fun init() {
+        onLoadSetTings()
         config.onReload { onLoadSetTings() }
     }
 
@@ -53,7 +53,7 @@ object SetTings {
             configSql.sqlite = BukkitPlugin.getInstance().dataFolder
         }
     }
-     class SetConfig(
+    class SetConfig(
        // val visibleByDistance: Double = 32.0,
     )
 

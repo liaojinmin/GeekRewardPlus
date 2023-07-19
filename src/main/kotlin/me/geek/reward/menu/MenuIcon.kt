@@ -1,7 +1,9 @@
 package me.geek.reward.menu
 
 import me.geek.reward.SetTings
+import org.bukkit.entity.Player
 import taboolib.library.xseries.XMaterial
+import taboolib.platform.compat.replacePlaceholder
 
 /**
  * 作者: 老廖
@@ -33,52 +35,9 @@ data class MenuIcon(
      */
     var lore: List<String>,
 
-    /**
-     * 图标对应奖励包ID
-     */
-    val packID: String?,
-
-    /**
-     * 图标奖励包需要的值
-     */
-    val isValue: String,
-
-    /**
-     * 已领取动作
-     */
-    val achieve: String,
-
-    /**
-     * 不可领取动作
-     */
-    val deny: String,
-
-    /**
-     * 允许领取动作
-     */
-    val allow: String,
 
     /**
      * 普通的点击动作
      */
     val action: String
-) {
-    fun parse(value: Int, list: MutableList<String>): String {
-        if (value >= isValue.toInt()) {
-            return if (list.find { it == packID } != null) SetTings.State.Received.dis else SetTings.State.Available.dis
-        }
-        return SetTings.State.NotAvailable.dis
-    }
-    fun parse(value: Double, list: MutableList<String>): String {
-        if (value >= isValue.toDouble()) {
-            return if (list.find { it == packID } != null) SetTings.State.Received.dis else SetTings.State.Available.dis
-        }
-        return SetTings.State.NotAvailable.dis
-    }
-    fun parse(value: Long, list: MutableList<String>): String {
-        if (value >= isValue.toInt()) {
-            return if (list.find { it == packID } != null) SetTings.State.Received.dis else SetTings.State.Available.dis
-        }
-        return SetTings.State.NotAvailable.dis
-    }
-}
+)

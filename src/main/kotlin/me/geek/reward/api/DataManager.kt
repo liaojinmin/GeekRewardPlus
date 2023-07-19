@@ -1,9 +1,16 @@
 package me.geek.reward.api
 
 import com.google.gson.GsonBuilder
+import me.geek.GeekRewardPlus
 import me.geek.reward.SetTings
+import me.geek.reward.api.DataManager.updateByTask
+import me.geek.reward.api.DataManager.wantBasicDataByTask
+import me.geek.reward.api.data.PlayerData
 import me.geek.reward.service.*
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
+import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.service.PlatformExecutor
 import java.nio.charset.StandardCharsets
@@ -52,25 +59,40 @@ object DataManager {
      */
     private val sqlImpl: SQLImpl = SQLImpl()
 
+    @SubscribeEvent
+    fun onJoin(e: PlayerJoinEvent) {
+        // 在数据库线程查询数据
+        refreshCache.add(e.player)
+    }
+
+    @SubscribeEvent
+    fun onQuit(e: PlayerQuitEvent) {
+        e.player.getBasicData()?.let {
+            refreshCache.add(it)
+        }
+    }
+
     fun start() {
         sqlImpl.start()
         refreshTask?.cancel()
-        refreshTask = submitAsync(delay = 20, period = 2) {
+        refreshTask = submitAsync(delay = 20, period = 5) {
             try {
                 val a = refreshCache.listIterator()
                 while (a.hasNext()) {
                     when (val pack = a.next()) {
                         is PlayerData -> {
                             sqlImpl.update(pack)
+                            GeekRewardPlus.debug("task is PlayerData ")
                             a.remove()
                         }
                         is Player -> {
                             val data = sqlImpl.select(pack.uniqueId, pack.name)
                             dataCache[data.uuid] = data
                             dataCache2[data.name] = data
+                            GeekRewardPlus.debug("task is Player ")
                             a.remove()
                         }
-                        else -> a.remove()
+                        else -> { a.remove() }
                     }
                 }
             } catch (ex: Exception) {
@@ -210,8 +232,6 @@ object DataManager {
             } else error("无法连接到数据库")
             return data!!
         }
-
-
     }
     private enum class SqlTab(val tab: String) {
         SQLITE_1(
@@ -230,7 +250,7 @@ object DataManager {
                     " `time` BIGINT(20) NOT NULL," +
                     "PRIMARY KEY (`uuid`)" +
                     ");"
-        ),
+        )
     }
 
 }

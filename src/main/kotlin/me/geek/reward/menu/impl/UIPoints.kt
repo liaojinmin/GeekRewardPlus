@@ -19,7 +19,7 @@ import taboolib.platform.util.buildItem
  * @时间: 2023/7/16 16:14
  * @包: me.geek.reward.menu.impl
  */
-fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData) {
+fun Player.openPointsUI(data: PlayerData, menuData: MenuData = Menu.pointsMenuData) {
 
     openMenu<Linked<RewardConfig<Int>>>(menuData.title.replacePlaceholder(this)) {
 
@@ -29,25 +29,25 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
 
         slots(menuData.itemUISlots)
 
-        elements { RewardManager.moneyConfigCache }
+        elements { RewardManager.pointsConfigCache }
 
         onGenerate { player, e, _, _ ->
             menuData.menuIcon['@']?.let { icon ->
                 buildItem(icon.mats) {
 
-                    val state = e.parse(data.moneyKey, data.money)
+                    val state = e.parse(data.pointsKey, data.points)
 
                     val max = e.parseValue()
 
                     // 解析展示物品名称
                     name = icon.name.replacePlaceholder(player)
                         .replace("{max_value}",max)
-                        .replace("{now_value}", data.money.toString())
+                        .replace("{now_value}", data.points.toString())
                         .replace("{state}", state)
 
                     // 添加配置包描述
                    // e.info.forEach {
-                   //     lore.add(it.replacePlaceholder(player))
+                     //   lore.add(it.replacePlaceholder(player))
                   //  }
 
                     // 添加图标描述
@@ -60,7 +60,7 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                             lore.add(
                                 it.replacePlaceholder(player)
                                     .replace("{max_value}", max)
-                                    .replace("{now_value}", data.money.toString())
+                                    .replace("{now_value}", data.points.toString())
                                     .replace("{state}", state)
                             )
                         }
@@ -73,15 +73,15 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
 
         onClick { _, element ->
 
-            if (data.money >= element.value) {
+            if (data.points >= element.value) {
                 if (data.pointsKey.find { it == element.id } != null) {
-                    KetherAPI.instantKether(this@openMoneyUI, element.require.achieve)
+                    KetherAPI.instantKether(this@openPointsUI, element.require.achieve)
                 } else {
                     // 允许领取
                     data.pointsKey.add(element.id)
-                    KetherAPI.instantKether(this@openMoneyUI, element.require.allow)
+                    KetherAPI.instantKether(this@openPointsUI, element.require.allow)
                 }
-            } else KetherAPI.instantKether(this@openMoneyUI, element.require.deny)
+            } else KetherAPI.instantKether(this@openPointsUI, element.require.deny)
         }
 
 
@@ -91,8 +91,8 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
             when (key) {
                 '<' -> {
                     set(icon.char, buildItem(icon.mats) {
-                        name = icon.name.replacePlaceholder(this@openMoneyUI)
-                        lore.addAll(icon.lore.replacePlaceholder(this@openMoneyUI))
+                        name = icon.name.replacePlaceholder(this@openPointsUI)
+                        lore.addAll(icon.lore.replacePlaceholder(this@openPointsUI))
                         customModelData = icon.model
                         hideAll()
                     }) {
@@ -105,8 +105,8 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                 }
                 '>' -> {
                     set(icon.char, buildItem(icon.mats) {
-                        name = icon.name.replacePlaceholder(this@openMoneyUI)
-                        lore.addAll(icon.lore.replacePlaceholder(this@openMoneyUI))
+                        name = icon.name.replacePlaceholder(this@openPointsUI)
+                        lore.addAll(icon.lore.replacePlaceholder(this@openPointsUI))
                         customModelData = icon.model
                         hideAll()
                     }) {
@@ -119,13 +119,14 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                 }
                 // 其它任意图标如果有动作则执行
                 else -> {
-                    if (key != '@')
-                    set(key, buildItem(icon.mats) {
-                        name = icon.name.replacePlaceholder(this@openMoneyUI)
-                        lore.addAll(icon.lore.replacePlaceholder(this@openMoneyUI))
-                        customModelData = icon.model
-                    }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                    if (key != '@') {
+                        set(key, buildItem(icon.mats) {
+                            name = icon.name.replacePlaceholder(this@openPointsUI)
+                            lore.addAll(icon.lore.replacePlaceholder(this@openPointsUI))
+                            customModelData = icon.model
+                        }) {
+                            if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                        }
                     }
                 }
             }

@@ -1,0 +1,51 @@
+points:
+  # 这个奖励包的 唯一ID，，储存在数据库
+  100点券奖励包:
+    # 这个奖励包需要累计多少点券获得
+    value: 100
+    # 在 GUI 中显示的奖励信息
+    info:
+      - '&f礼包内容:'
+      - '&f - 1000 金币'
+    Require:
+
+      # 已领取的情况下点击执行的动作
+      achieve:
+        - "tell '你已经领取过这个礼包'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 不可领取时点击执行的动作
+      deny:
+        - "tell '的充值数量不够...'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 允许领取的时候点击执行的动作
+      allow:
+        - "command 'money give {player_name} 1000' as console"
+        - "tell '成功领取累计充值 100 点券礼包...'"
+        - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"
+  # 这个奖励包的 唯一ID，，储存在数据库
+  1000点券奖励包:
+    # 这个奖励包需要累计多少点券获得
+    value: 1000
+    # 在 GUI 中显示的奖励信息
+    info:
+      - '&f礼包内容:'
+      - '&f - 1000 金币'
+    Require:
+
+      # 已领取的情况下点击执行的动作
+      achieve:
+        - "tell '你已经领取过这个礼包'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 不可领取时点击执行的动作
+      deny:
+        - "tell '你的充值数量不够...'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 允许领取的时候点击执行的动作
+      allow:
+        - "command 'money give {player_name} 1000' as console"
+        - "tell '成功领取累计充值 100 点券礼包...'"
+        - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"

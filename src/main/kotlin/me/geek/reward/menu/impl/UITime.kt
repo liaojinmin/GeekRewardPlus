@@ -2,6 +2,7 @@ package me.geek.reward.menu.impl
 
 import me.geek.reward.api.RewardConfig
 import me.geek.reward.api.RewardManager
+import me.geek.reward.api.data.ExpIryBuilder
 import me.geek.reward.api.data.PlayerData
 import me.geek.reward.kether.KetherAPI
 import me.geek.reward.menu.Menu
@@ -19,9 +20,9 @@ import taboolib.platform.util.buildItem
  * @时间: 2023/7/16 16:14
  * @包: me.geek.reward.menu.impl
  */
-fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData) {
+fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) {
 
-    openMenu<Linked<RewardConfig<Int>>>(menuData.title.replacePlaceholder(this)) {
+    openMenu<Linked<RewardConfig<ExpIryBuilder>>>(menuData.title.replacePlaceholder(this)) {
 
         map(*menuData.layout)
 
@@ -29,26 +30,26 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
 
         slots(menuData.itemUISlots)
 
-        elements { RewardManager.moneyConfigCache }
+        elements { RewardManager.timeConfigCache }
 
         onGenerate { player, e, _, _ ->
             menuData.menuIcon['@']?.let { icon ->
                 buildItem(icon.mats) {
 
-                    val state = e.parse(data.moneyKey, data.money)
+                    val state = e.parse(data.timeKey, data.time)
 
                     val max = e.parseValue()
 
                     // 解析展示物品名称
                     name = icon.name.replacePlaceholder(player)
-                        .replace("{max_value}",max)
-                        .replace("{now_value}", data.money.toString())
+                        .replace("{max_value}", max)
+                        .replace("{now_value}", data.time.getExpiryFormat())
                         .replace("{state}", state)
 
                     // 添加配置包描述
-                   // e.info.forEach {
+                  //  e.info.forEach {
                    //     lore.add(it.replacePlaceholder(player))
-                  //  }
+                    //}
 
                     // 添加图标描述
                     icon.lore.forEach {
@@ -60,7 +61,7 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                             lore.add(
                                 it.replacePlaceholder(player)
                                     .replace("{max_value}", max)
-                                    .replace("{now_value}", data.money.toString())
+                                    .replace("{now_value}", data.time.getExpiryFormat())
                                     .replace("{state}", state)
                             )
                         }
@@ -73,15 +74,15 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
 
         onClick { _, element ->
 
-            if (data.money >= element.value) {
+            if (data.time.millis >= element.value.millis) {
                 if (data.pointsKey.find { it == element.id } != null) {
-                    KetherAPI.instantKether(this@openMoneyUI, element.require.achieve)
+                    KetherAPI.instantKether(this@openTimeUI, element.require.achieve)
                 } else {
                     // 允许领取
                     data.pointsKey.add(element.id)
-                    KetherAPI.instantKether(this@openMoneyUI, element.require.allow)
+                    KetherAPI.instantKether(this@openTimeUI, element.require.allow)
                 }
-            } else KetherAPI.instantKether(this@openMoneyUI, element.require.deny)
+            } else KetherAPI.instantKether(this@openTimeUI, element.require.deny)
         }
 
 
@@ -91,8 +92,8 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
             when (key) {
                 '<' -> {
                     set(icon.char, buildItem(icon.mats) {
-                        name = icon.name.replacePlaceholder(this@openMoneyUI)
-                        lore.addAll(icon.lore.replacePlaceholder(this@openMoneyUI))
+                        name = icon.name.replacePlaceholder(this@openTimeUI)
+                        lore.addAll(icon.lore.replacePlaceholder(this@openTimeUI))
                         customModelData = icon.model
                         hideAll()
                     }) {
@@ -105,8 +106,8 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                 }
                 '>' -> {
                     set(icon.char, buildItem(icon.mats) {
-                        name = icon.name.replacePlaceholder(this@openMoneyUI)
-                        lore.addAll(icon.lore.replacePlaceholder(this@openMoneyUI))
+                        name = icon.name.replacePlaceholder(this@openTimeUI)
+                        lore.addAll(icon.lore.replacePlaceholder(this@openTimeUI))
                         customModelData = icon.model
                         hideAll()
                     }) {
@@ -121,8 +122,8 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                 else -> {
                     if (key != '@')
                     set(key, buildItem(icon.mats) {
-                        name = icon.name.replacePlaceholder(this@openMoneyUI)
-                        lore.addAll(icon.lore.replacePlaceholder(this@openMoneyUI))
+                        name = icon.name.replacePlaceholder(this@openTimeUI)
+                        lore.addAll(icon.lore.replacePlaceholder(this@openTimeUI))
                         customModelData = icon.model
                     }) {
                         if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)

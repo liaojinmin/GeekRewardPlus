@@ -2,7 +2,9 @@ package me.geek
 
 import me.geek.reward.SetTings
 import me.geek.reward.Placeholder
+import me.geek.reward.api.RewardManager
 import me.geek.reward.api.DataManager
+import me.geek.reward.menu.Menu
 import org.bukkit.Bukkit
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
@@ -49,8 +51,17 @@ object GeekRewardPlus : Plugin() {
         console().sendMessage("     §8适用于Bukkit: §71.12.x-1.20.x §8当前: §7" + Bukkit.getName())
         console().sendMessage("")
 
+        // 配置文件加载
+        SetTings.init()
+
+        // 奖励配置加载
+        RewardManager.load()
+
         // 数据库启动
         DataManager.start()
+
+        // 菜单加载
+        Menu.reload()
 
         // hook plugin
         hook()
@@ -71,13 +82,13 @@ object GeekRewardPlus : Plugin() {
 
 
     fun say(msg: String) {
-        console().sendMessage("§8[§6GeekReward§ePlus§8] ${msg.replace("&", "§")}")
+        console().sendMessage("§8[§eGeek§6Reward§ePlus§8] ${msg.replace("&", "§")}")
     }
 
 
     fun debug(msg: String) {
         if (SetTings.deBug) {
-            console().sendMessage("§8[§6GeekReward§ePlus§8]§8[§cDeBug§8]§7 ${msg.replace("&", "§")}")
+            console().sendMessage("§8[§6GeekRewardPlus§8]§8[§cDeBug§8]§7 ${msg.replace("&", "§")}")
         }
     }
 }

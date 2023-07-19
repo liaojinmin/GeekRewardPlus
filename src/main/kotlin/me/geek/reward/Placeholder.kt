@@ -25,24 +25,12 @@ class Placeholder : PlaceholderExpansion() {
         if (params.contains("Top")) {
             val index = params.filter { it.isDigit() }.toInt()
             return when (params) {
-                "pointsTop_amt_$index" -> GeekRewardPlus.top.points[index]?.let {
-                    it.split(";")[1]
-                } ?: "暂无"
-                "pointsTop_name_$index" -> GeekRewardPlus.top.points[index]?.let {
-                    it.split(";")[0]
-                } ?: "暂无"
-                "moneyTop_amt_$index" -> GeekRewardPlus.top.money[index]?.let {
-                    it.split(";")[1]
-                } ?: "暂无"
-                "moneyTop_name_$index" -> GeekRewardPlus.top.money[index]?.let {
-                    it.split(";")[0]
-                } ?: "暂无"
-                "timeTop_amt_$index" -> GeekRewardPlus.top.time[index]?.let {
-                    it.split(";")[1]
-                } ?: "暂无"
-                "timeTop_name_$index" -> GeekRewardPlus.top.time[index]?.let {
-                    it.split(";")[0]
-                } ?: "暂无"
+                "pointsTop_amt_$index" ->  "暂无"
+                "pointsTop_name_$index" ->  "暂无"
+                "moneyTop_amt_$index" ->  "暂无"
+                "moneyTop_name_$index" ->  "暂无"
+                "timeTop_amt_$index" ->  "暂无"
+                "timeTop_name_$index" -> "暂无"
                 else -> "错误参数"
             }
         }

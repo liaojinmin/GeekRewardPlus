@@ -1,0 +1,47 @@
+time:
+  # 这个奖励包的 唯一ID，，储存在数据库
+  10分钟奖励包:
+    # 这个奖励包需要 在线 多久获得 （1h = 一小时) (30s = 30秒) （30m = 30分钟）
+    value: 10m
+    # 在 GUI 中显示的奖励信息
+    info:
+      - '&f礼包内容:'
+      - '&f - 钻石 * 1'
+    Require:
+      # 已领取的情况下点击执行的动作
+      achieve:
+        - "tell '你已经领取过这个礼包'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+      # 不可领取时点击执行的动作
+      deny:
+        - "tell '你累计在线时长不足...'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 允许领取的时候点击执行的动作
+      allow:
+        - "command 'give {player_name} DIAMOND 1' as console"
+        - "tell '成功领取累计在线 10 分钟奖励..'"
+        - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"
+  # 这个奖励包的 唯一ID，，储存在数据库
+  30分钟奖励包:
+    # 这个奖励包需要 在线 多久获得 （1h = 一小时) (30s = 30秒) （30m = 30分钟）
+    value: 30m
+    # 在 GUI 中显示的奖励信息
+    info:
+      - '&f礼包内容:'
+      - '&f - 金币 * 100'
+    Require:
+      # 已领取的情况下点击执行的动作
+      achieve:
+        - "tell '你已经领取过这个礼包'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+      # 不可领取时点击执行的动作
+      deny:
+        - "tell '你累计在线时长不足30分钟...'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 允许领取的时候点击执行的动作
+      allow:
+        - "command 'money give {player_name} 100' as console"
+        - "tell '成功领取累计在线 30 分钟奖励..'"
+        - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"

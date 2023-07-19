@@ -1,5 +1,6 @@
 package me.geek.reward.api
 
+import me.geek.reward.api.data.BoardData
 import java.util.concurrent.ConcurrentHashMap
 
 /**

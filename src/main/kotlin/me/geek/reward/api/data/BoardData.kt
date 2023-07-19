@@ -1,4 +1,4 @@
-package me.geek.reward.api
+package me.geek.reward.api.data
 
 import java.util.UUID
 

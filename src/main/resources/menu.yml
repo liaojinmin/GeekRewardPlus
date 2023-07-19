@@ -1,0 +1,85 @@
+points:
+  title: '&e累计充值 &e点卷礼包'
+  layout:
+    - '#########'
+    - '#@@@@@@@#'
+    - '<#######>'
+  icons:
+    '@':
+      display:
+        mats: BOOK
+        name: "&e累计充值 &c{max_value} &e点卷礼包"
+        lore:
+          - "{info}"
+          - "&f需要充值 &c{max_value} &f点卷才可领取"
+          - "&f当前充值 &A{now_value}&8/&f{max_value}"
+          - "&f领取状态: {state}"
+    '#':
+      display:
+        mats: BLACK_STAINED_GLASS_PANE
+        name: '&b&l 挡板'
+    '>':
+      display:
+        mats: SPECTRAL_ARROW
+        name: '下一页'
+    '<':
+      display:
+        mats: SPECTRAL_ARROW
+        name: '上一页'
+money:
+  title: '&0累计获得 &a金币 &0礼包'
+  layout:
+    - '#########'
+    - '#@@@@@@@#'
+    - '<#######>'
+  icons:
+    '@':
+      display:
+        mats: BOOK
+        name: "&e累计获得 &c{max_value} &e金币礼包"
+        lore:
+          - "{info}"
+          - "&f需要获得 &c{max_value} &f金币才可领取"
+          - "&f当前获得 &A{now_value}&8/&f{max_value}"
+          - "&f领取状态: {state}"
+    '#':
+      display:
+        mats: BLACK_STAINED_GLASS_PANE
+        name: '&b&l 挡板'
+    '>':
+      display:
+        mats: SPECTRAL_ARROW
+        name: '下一页'
+    '<':
+      display:
+        mats: SPECTRAL_ARROW
+        name: '上一页'
+
+time:
+  title: '&0累计 &a在线时长 &0礼包'
+  layout:
+    - '#########'
+    - '#@@@@@@@#'
+    - '<#######>'
+  icons:
+    '@':
+      display:
+        mats: BOOK
+        name: "&e累计在线 &c{max_value} &e金币礼包"
+        lore:
+          - "{info}"
+          - "&f需要在线 &c{max_value} &f才可领取"
+          - "&f当前在线 &A{now_value}&7/&f{max_value}"
+          - "&f领取状态: {state}"
+    '#':
+      display:
+        mats: BLACK_STAINED_GLASS_PANE
+        name: '&b&l 挡板'
+    '>':
+      display:
+        mats: SPECTRAL_ARROW
+        name: '下一页'
+    '<':
+      display:
+        mats: SPECTRAL_ARROW
+        name: '上一页'

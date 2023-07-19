@@ -3,19 +3,10 @@ package me.geek.reward.menu
 import me.geek.GeekRewardPlus
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.function.console
-import taboolib.common.platform.function.releaseResourceFile
-import taboolib.library.configuration.ConfigurationSection
 import taboolib.library.xseries.XMaterial
 import taboolib.module.chat.colored
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.ConfigFile
-import taboolib.module.configuration.SecuredFile
-import taboolib.module.configuration.util.getMap
-import taboolib.module.lang.sendLang
-import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.system.measureTimeMillis
 
 /**
@@ -25,38 +16,50 @@ import kotlin.system.measureTimeMillis
 
 object Menu {
 
-
-    private val AIR = ItemStack(Material.AIR)
-
-    @Config(value = "money.yml", autoReload = true)
-    lateinit var money: ConfigFile
+    @Config(value = "menu.yml", autoReload = true)
+    lateinit var menu: ConfigFile
         private set
+
     lateinit var moneyMenuData: MenuData
         private set
 
-    private fun loadMoney() {
+    lateinit var pointsMenuData: MenuData
+        private set
+
+    lateinit var timeMenuData: MenuData
+        private set
+
+    fun reload() {
+        load()
+        menu.onReload { load() }
+    }
+
+    private fun load() {
         measureTimeMillis {
-            val title = money.getString("title")!!.colored()
-            val layouts = money.getStringList("layout")
-            val icon = mutableMapOf<Char, MenuIcon>()
-            money.getConfigurationSection("icons")!!.getKeys(false).forEach {
-                val key = "icons.$it"
-                icon[it.first()] = MenuIcon(
-                    it.first(),
-                    XMaterial.valueOf(money.getString("$key.display.material") ?: "PAPER"),
-                    money.getInt("$key.display.model"),
-                    money.getString("$key.display.name")?.colored() ?: "",
-                    money.getStringList("$key.display.lore").colored(),
-                    money.getString("$key.display.packID"),
-                    money.getString("$key.display.isValue") ?: "0",
-                    money.getStringList("$key.Require.achieve").joinToString("\n").colored(),
-                    money.getStringList("$key.Require.deny").joinToString("\n").colored(),
-                    money.getStringList("$key.Require.allow").joinToString("\n").colored(),
-                    money.getStringList("$key.action").joinToString("\n").colored()
-                )
+            listOf("points","money","time").forEach { id ->
+
+                val title = menu.getString("$id.title")!!.colored()
+                val layouts = menu.getStringList("$id.layout")
+                val icon = mutableMapOf<Char, MenuIcon>()
+                menu.getConfigurationSection("$id.icons")!!.getKeys(false).forEach {
+                    val key = "$id.icons.$it"
+                    icon[it.first()] = MenuIcon(
+                        it.first(),
+                        XMaterial.valueOf(menu.getString("$key.display.mats") ?: "PAPER"),
+                        menu.getInt("$key.display.model"),
+                        menu.getString("$key.display.name")?.colored() ?: "",
+                        menu.getStringList("$key.display.lore").colored(),
+                        menu.getStringList("$key.action").joinToString("\n").colored()
+                    )
+                }
+
+                when (id) {
+                    "points" -> pointsMenuData = MenuData(title, layouts.toTypedArray(), icon)
+                    "money" -> moneyMenuData = MenuData(title, layouts.toTypedArray(), icon)
+                    "time" -> timeMenuData = MenuData(title, layouts.toTypedArray(), icon)
+                }
             }
-            moneyMenuData = MenuData(title, layouts.toTypedArray(), icon)
-        }.also { GeekRewardPlus.say("§7加载 §e金币累计奖励 §7配置... §8(耗时 $it ms)") }
+        }.also { GeekRewardPlus.say("§7加载奖励菜单配置... §8(耗时 $it ms)") }
     }
 
 

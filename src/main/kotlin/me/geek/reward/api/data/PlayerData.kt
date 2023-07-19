@@ -1,4 +1,4 @@
-package me.geek.reward.api
+package me.geek.reward.api.data
 
 import com.google.gson.GsonBuilder
 import me.geek.GeekRewardPlus
@@ -18,7 +18,7 @@ class PlayerData(
 
     var points: Int = 0
 
-    var money: Double = 0.0
+    var money: Int = 0
 
     var time: ExpIryBuilder = ExpIryBuilder("", false)
 
@@ -33,7 +33,7 @@ class PlayerData(
 
 
     fun reset() {
-        this.money = 0.0
+        this.money = 0
         this.points = 0
         this.time = ExpIryBuilder("", false)
         this.pointsKey = mutableListOf()

@@ -20,11 +20,11 @@ class MenuData(
     val itemUISlots by lazy {
         mutableListOf<Int>().apply {
             var index = 0
-            menuIcon.forEach { (_, value) ->
-                if (value.packID != null) {
-                    add(index)
+            layout.forEach { d ->
+                d.toCharArray().forEach { c ->
+                    if (c == '@') add(index)
+                    index++
                 }
-                index++
             }
         }
     }

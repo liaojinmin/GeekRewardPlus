@@ -1,0 +1,53 @@
+money:
+  # 这个奖励包的 唯一ID，，储存在数据库
+  1500金币奖励包:
+    # 这个奖励包需要累计多少点券获得
+    value: 1500
+    # 在 GUI 中显示的奖励信息
+    info:
+      - '&f礼包内容:'
+      - '&f - 钻石 * 10'
+    Require:
+      # 已领取的情况下点击执行的动作
+      achieve:
+        - "tell '你已经领取过这个礼包'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+      # 不可领取时点击执行的动作
+      deny:
+        - "tell '你累计获得的金币不足...'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 允许领取的时候点击执行的动作
+      allow:
+        - "command 'give {player_name} DIAMOND 10' as console"
+        - "tell '成功领取累计 1500金币 的礼包..'"
+        - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"
+
+
+  # 这个奖励包的 唯一ID，，储存在数据库
+  1万金币奖励包:
+    # 这个奖励包需要累计多少点券获得
+    value: 10000
+    # 在 GUI 中显示的奖励信息
+    info:
+      - '&f礼包内容:'
+      - '&f - 钻石 * 32'
+      - '&f - &d下界合金碎片 &7* &f3'
+    Require:
+
+      # 已领取的情况下点击执行的动作
+      achieve:
+        - "tell '你已经领取过这个礼包'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 不可领取时点击执行的动作
+      deny:
+        - "tell '你获得的金币数量不足...'"
+        - "sound BLOCK_NOTE_BLOCK_DIDGERIDOO by 1 1"
+
+      # 允许领取的时候点击执行的动作
+      allow:
+        - "command 'give {player_name} DIAMOND 32' as console"
+        - "command 'give {player_name} NETHERITE_INGOT 3' as console"
+        - "tell '成功领取累计 10000金币 的礼包..'"
+        - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"

@@ -1,9 +1,12 @@
 package me.geek.reward
 
-import me.geek.reward.menu.impl.openMoneyUI
 import me.geek.reward.api.DataManager
 import me.geek.reward.api.DataManager.getBasicData
 import me.geek.reward.api.DataManager.updateByTask
+import me.geek.reward.api.data.ExpIryBuilder
+import me.geek.reward.menu.impl.openMoneyUI
+import me.geek.reward.menu.impl.openPointsUI
+import me.geek.reward.menu.impl.openTimeUI
 import org.bukkit.Bukkit
 
 import org.bukkit.command.CommandSender
@@ -74,12 +77,12 @@ object CmdHeader {
                                 when (context["对象类型"]) {
                                     "money" -> {
                                         if (action == "add") {
-                                            data.money += value.toDouble()
+                                            data.money += value.toInt()
                                             console().sendLang("Data-Add-value", it.name, "添加", value, "累计金币")
                                             sender.sendLang("Data-Add-value", it.name, "添加", value, "累计金币")
                                         }
                                         else {
-                                            data.money -= value.toDouble()
+                                            data.money -= value.toInt()
                                             console().sendLang("Data-Add-value", it.name, "扣除", value, "累计金币")
                                             sender.sendLang("Data-Add-value", it.name, "扣除", value, "累计金币")
                                         }
@@ -97,11 +100,11 @@ object CmdHeader {
                                     }
                                     "time" -> {
                                         if (action == "add") {
-                                            data.time += Expiry.setExpiryMillis(value, false)
+                                            data.time.merge(ExpIryBuilder(value, false))
                                             console().sendLang("Data-Add-value", it.name, "添加", value, "累计在线")
                                             sender.sendLang("Data-Add-value", it.name, "添加", value, "累计在线")
                                         } else {
-                                            data.time -= Expiry.setExpiryMillis(value, false)
+                                            data.time.merge(ExpIryBuilder(value, false))
                                             console().sendLang("Data-Add-value", it.name, "扣除", value, "累计在线")
                                             sender.sendLang("Data-Add-value", it.name, "扣除", value, "累计在线")
                                         }
@@ -118,16 +121,16 @@ object CmdHeader {
     @CommandBody
     val open = subCommand {
         dynamic("菜单名称") {
-            suggestion<CommandSender>(uncheck = true) { _, _ ->
-                listOf("points", "money","time")
-            }
+            suggest { listOf("points", "money", "time") }
             execute<Player> { sender, text, _ ->
-                when (text["菜单名称"]) {
-                    "points" -> TODO()
-                    "money" -> sender.getBasicData()?.let { sender.openMoneyUI(it) }
-                    "time" -> TODO()
-                    else -> {
-                        sender.sendLang("Open-Menu-Err", text["菜单名称"])
+                sender.getBasicData()?.let {
+                    when (text["菜单名称"]) {
+                        "points" -> sender.openPointsUI(it)
+                        "money" -> sender.openMoneyUI(it)
+                        "time" -> sender.openTimeUI(it)
+                        else -> {
+                            sender.sendLang("Open-Menu-Err", text["菜单名称"])
+                        }
                     }
                 }
             }
