@@ -75,11 +75,11 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
 
             val player = event.clicker
             if (data.money >= element.value) {
-                if (data.pointsKey.find { it == element.id } != null) {
+                if (data.moneyKey.find { it == element.id } != null) {
                     KetherAPI.instantKether(player, element.require.achieve.replacePlaceholder(player))
                 } else {
                     // 允许领取
-                    data.pointsKey.add(element.id)
+                    data.moneyKey.add(element.id)
                     KetherAPI.instantKether(player, element.require.allow.replacePlaceholder(player))
                 }
             } else KetherAPI.instantKether(player, element.require.deny.replacePlaceholder(player))

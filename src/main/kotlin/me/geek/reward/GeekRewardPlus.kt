@@ -33,9 +33,9 @@ object GeekRewardPlus : Plugin() {
 
     val instance by lazy { BukkitPlugin.getInstance() }
 
-    private val url = URL("https://raw.githubusercontent.com/liaojinmin/GeekCosmeticsWiki/master/version.txt")
+    private val url = URL("https://raw.githubusercontent.com/liaojinmin/GeekRewardPlus/GeekRewardPlus-V2/version.txt")
 
-    const val version = "2.0"
+    const val version = "2.1"
 
     override fun onLoad() {
         Metrics(16328, version, Platform.BUKKIT)
@@ -109,7 +109,7 @@ object GeekRewardPlus : Plugin() {
                 debug("&bUPDATE &8| &c$now vs &a$new")
                 if (new > now) {
                     say("&bUPDATE &8| &3有新版本可用: &a$new &3当前版本: $now, 通过下方链接下载!")
-                    say("&f https://www.mcbbs.net/thread-1450734-1-1.html")
+                    say("&f https://www.mcbbs.net/thread-1380923-1-1.html")
                 } else {
                     say("&bUPDATE &8| &3当前已是最新版本...")
                 }

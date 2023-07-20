@@ -72,11 +72,11 @@ fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) 
             val player = event.clicker
             GeekRewardPlus.debug("time ac: ${data.time.millis} >= ${element.value.millis}")
             if (data.time.millis >= element.value.millis) {
-                if (data.pointsKey.find { it == element.id } != null) {
+                if (data.timeKey.find { it == element.id } != null) {
                     KetherAPI.instantKether(this@openTimeUI, element.require.achieve.replacePlaceholder(player))
                 } else {
                     // 允许领取
-                    data.pointsKey.add(element.id)
+                    data.timeKey.add(element.id)
                     KetherAPI.instantKether(this@openTimeUI, element.require.allow.replacePlaceholder(player))
                 }
             } else KetherAPI.instantKether(this@openTimeUI, element.require.deny.replacePlaceholder(player))

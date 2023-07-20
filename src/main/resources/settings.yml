@@ -1,5 +1,7 @@
 debug: false
 
+checkUpdate: true
+
 data_storage:
   type: sqlite # sqlite or mysql
   # 数据库 KEY 模式 高版本、正版服建议 UUID
