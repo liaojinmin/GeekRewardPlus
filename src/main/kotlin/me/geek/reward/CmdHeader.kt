@@ -3,7 +3,9 @@ package me.geek.reward
 import me.geek.reward.api.DataManager
 import me.geek.reward.api.DataManager.getBasicData
 import me.geek.reward.api.DataManager.updateByTask
+import me.geek.reward.api.RewardManager
 import me.geek.reward.api.data.ExpIryBuilder
+import me.geek.reward.menu.Menu
 import me.geek.reward.menu.impl.openMoneyUI
 import me.geek.reward.menu.impl.openPointsUI
 import me.geek.reward.menu.impl.openTimeUI
@@ -14,7 +16,6 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.command.*
 import taboolib.common.platform.function.console
 
-import taboolib.expansion.createHelper
 import taboolib.module.lang.sendLang
 import taboolib.platform.util.sendLang
 
@@ -32,20 +33,53 @@ object CmdHeader {
     val reload = subCommand {
         execute<CommandSender> { sender, _, _ ->
             sender.sendMessage("[GeekRewardPlus] 已重新加载配置...")
+            RewardManager.load()
+            Menu.reload()
         }
     }
 
     @CommandBody(permission = "GeekRewardPlus.Command.reset")
     val reset = subCommand {
+        // pms reset player type key ???
         dynamic("玩家名称") {
-            suggestion<CommandSender> { _, _ ->
-                DataManager.getAllData().map { it.name }
-            }
+            suggest { DataManager.getAllData().map { it.name } }
             execute<CommandSender> { _, context, _ ->
                 Bukkit.getPlayer(context["玩家名称"])?.let {
                     it.getBasicData()?.let { data ->
                         data.reset()
                         data.updateByTask()
+                    }
+                }
+            }
+
+            dynamic("种类") {
+                suggest { listOf("points", "money", "time") }
+                execute<CommandSender> { _, context, _ ->
+                    Bukkit.getPlayer(context["玩家名称"])?.let {
+                        it.getBasicData()?.let { data ->
+                            when (context["种类"]) {
+                                "points" -> data.pointsKey.clear()
+                                "money" -> data.moneyKey.clear()
+                                "time" -> data.timeKey.clear()
+                            }
+                            data.updateByTask()
+                        }
+                    }
+                }
+
+                dynamic("key") {
+                    execute<CommandSender> { _, context, _ ->
+                        Bukkit.getPlayer(context["玩家名称"])?.let {
+                            val key = context["key"]
+                            it.getBasicData()?.let { data ->
+                                when (context["种类"]) {
+                                    "points" -> data.pointsKey.removeIf { k -> k == key }
+                                    "money" -> data.moneyKey.removeIf { k -> k == key }
+                                    "time" -> data.timeKey.removeIf { k -> k == key }
+                                }
+                                data.updateByTask()
+                            }
+                        }
                     }
                 }
             }
@@ -135,10 +169,5 @@ object CmdHeader {
                 }
             }
         }
-    }
-
-    @CommandBody
-    val main = mainCommand {
-        createHelper()
     }
 }

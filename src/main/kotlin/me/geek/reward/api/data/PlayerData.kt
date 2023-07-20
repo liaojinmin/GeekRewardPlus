@@ -1,8 +1,9 @@
 package me.geek.reward.api.data
 
 import com.google.gson.GsonBuilder
-import me.geek.GeekRewardPlus
+import me.geek.reward.GeekRewardPlus
 import me.geek.reward.SetTings
+import me.geek.reward.api.RewardManager
 import me.geek.reward.service.Exclude
 import java.util.UUID
 
@@ -20,7 +21,9 @@ class PlayerData(
 
     var money: Int = 0
 
-    var time: ExpIryBuilder = ExpIryBuilder("", false)
+    var time: ExpIryBuilder = ExpIryBuilder("0", false)
+
+    var timeDay: Long = RewardManager.getTodayStartTime()
 
     var pointsKey: MutableList<String> = mutableListOf()
         private set
@@ -36,6 +39,7 @@ class PlayerData(
         this.money = 0
         this.points = 0
         this.time = ExpIryBuilder("", false)
+        this.timeDay = RewardManager.getTodayStartTime()
         this.pointsKey = mutableListOf()
         this.moneyKey = mutableListOf()
         this.timeKey = mutableListOf()

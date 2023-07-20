@@ -22,9 +22,6 @@ class ExpIryBuilder(
         private set
 
     @Expose
-    private var cacheTime = -1L
-
-    @Expose
     private val cache: MutableMap<String, Long> = mutableMapOf<String, Long>().apply {
         if (time.isEmpty()) return@apply
         val regex = Regex("\\d+?(?i)(d|h|m|s)\\s?")
@@ -43,11 +40,7 @@ class ExpIryBuilder(
             val m = cache["m"]?.let { it * 60 } ?: 0
             // 获取到期时间
             val ac = d + h + m + (cache["s"] ?: 0)
-            millis = if (!isDown) {
-                ac
-            } else {
-                (ac * 1000) + System.currentTimeMillis()
-            }
+            millis = ac
         }
     }
 
@@ -57,15 +50,8 @@ class ExpIryBuilder(
      * @return 获得格式 - 00d 00h 00m 00s
      */
     fun getExpiryFormat(): String {
-        if (cacheTime == -1L) {
-            cacheTime = if (!isDown) {
-                millis
-            } else {
-                (millis - System.currentTimeMillis()) / 1000
-            }
-        }
-        val times = cacheTime
-        var text = "0"
+        val times = millis
+        var text = ""
         val dd = times / 60 / 60 / 24
         val hh = times / 60 / 60 % 24
         val mm = times / 60 % 60
@@ -74,29 +60,19 @@ class ExpIryBuilder(
         if (hh > 0) text += "${hh}小时 "
         if (mm > 0) text += "${mm}分钟 "
         if (ss > 0) text += "${ss}秒"
-        return text
+        return text.ifEmpty { "0" }
     }
 
     /**
      * 根据计时种类更新时间戳
-     * @param time = 毫秒
+     * @param time = 秒
      */
-    fun autoUpdate(time: Long = 1): Boolean {
-        if (cacheTime == -1L) {
-            cacheTime = if (!isDown) {
-                millis
-            } else {
-                (millis - System.currentTimeMillis()) / 1000
-            }
-        }
+    fun autoUpdate(time: Long = 1) {
         if (!isDown) {
-            cacheTime+=time
-            this.millis+=time
-            return true
+            millis+=time
         } else {
-            cacheTime-=time
+            millis-=time
         }
-        return millis >= System.currentTimeMillis()
     }
 
     fun setMillis(time: Long): ExpIryBuilder {

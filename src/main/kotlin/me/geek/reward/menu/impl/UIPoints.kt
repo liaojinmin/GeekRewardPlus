@@ -71,17 +71,17 @@ fun Player.openPointsUI(data: PlayerData, menuData: MenuData = Menu.pointsMenuDa
         }
 
 
-        onClick { _, element ->
-
+        onClick { event, element ->
+            val player = event.clicker
             if (data.points >= element.value) {
                 if (data.pointsKey.find { it == element.id } != null) {
-                    KetherAPI.instantKether(this@openPointsUI, element.require.achieve)
+                    KetherAPI.instantKether(player, element.require.achieve.replacePlaceholder(player))
                 } else {
                     // 允许领取
                     data.pointsKey.add(element.id)
-                    KetherAPI.instantKether(this@openPointsUI, element.require.allow)
+                    KetherAPI.instantKether(player, element.require.allow.replacePlaceholder(player))
                 }
-            } else KetherAPI.instantKether(this@openPointsUI, element.require.deny)
+            } else KetherAPI.instantKether(player, element.require.deny.replacePlaceholder(player))
         }
 
 
@@ -96,7 +96,7 @@ fun Player.openPointsUI(data: PlayerData, menuData: MenuData = Menu.pointsMenuDa
                         customModelData = icon.model
                         hideAll()
                     }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
                         if (hasPreviousPage()) {
                             page(page-1)
                             openInventory(build())
@@ -110,7 +110,7 @@ fun Player.openPointsUI(data: PlayerData, menuData: MenuData = Menu.pointsMenuDa
                         customModelData = icon.model
                         hideAll()
                     }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
                         if (hasPreviousPage()) {
                             page(page+1)
                             openInventory(build())
@@ -125,7 +125,7 @@ fun Player.openPointsUI(data: PlayerData, menuData: MenuData = Menu.pointsMenuDa
                             lore.addAll(icon.lore.replacePlaceholder(this@openPointsUI))
                             customModelData = icon.model
                         }) {
-                            if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                            if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
                         }
                     }
                 }

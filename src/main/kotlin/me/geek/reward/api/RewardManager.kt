@@ -1,16 +1,23 @@
 package me.geek.reward.api
 
-import me.geek.GeekRewardPlus
+import me.geek.reward.GeekRewardPlus
+import me.geek.reward.SetTings
+import me.geek.reward.api.DataManager.getBasicData
 import me.geek.reward.api.data.ExpIryBuilder
-import org.bukkit.Material
+import org.bukkit.Bukkit
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
 import taboolib.common.platform.function.releaseResourceFile
+import taboolib.common.platform.function.submitAsync
+import taboolib.common.platform.service.PlatformExecutor
 import taboolib.common5.FileWatcher
 import taboolib.module.chat.colored
 import taboolib.module.configuration.ConfigFile
-import taboolib.module.configuration.Configuration.Companion.getObject
 import taboolib.module.configuration.SecuredFile
 import taboolib.platform.BukkitPlugin
+import taboolib.platform.util.sendLang
 import java.io.File
+import java.util.*
 import kotlin.system.measureTimeMillis
 
 /**
@@ -19,6 +26,10 @@ import kotlin.system.measureTimeMillis
  * @包: me.geek.reward.api
  */
 object RewardManager {
+    /**
+     * 计时线程
+     */
+    private var refreshTimeTask: PlatformExecutor.PlatformTask? = null
 
     val pointsConfigCache: MutableList<RewardConfig<Int>> = mutableListOf()
 
@@ -31,7 +42,6 @@ object RewardManager {
         moneyConfigCache.clear()
         timeConfigCache.clear()
         listOf("points", "money", "time").forEach { index ->
-
             fileLoad(saveDefault(index), {
                 loadFile(index, it)
                 it.onReload {
@@ -41,6 +51,45 @@ object RewardManager {
                 GeekRewardPlus.say("§7加载 §f$index §7奖励配置... §8(耗时 $it ms)")
             }
         }
+    }
+
+    @Awake(LifeCycle.ACTIVE)
+    fun start() {
+        refreshTimeTask?.cancel()
+        refreshTimeTask = submitAsync(delay = 20, period = 20) {
+            try {
+                val player = Bukkit.getOnlinePlayers().toList().listIterator()
+                while (player.hasNext()) {
+                    val p = player.next()
+                    if (p.isOnline) {
+                        val data = p.getBasicData()
+                        if (data != null) {
+                            if (SetTings.setConfig.timeReset) {
+                                // 重置在线时间
+                                if (data.timeDay <= System.currentTimeMillis()) {
+                                    p.sendLang("time-reset")
+                                    data.timeDay = getTodayStartTime()
+                                    data.timeKey.clear()
+                                    data.time = ExpIryBuilder("0", false)
+                                }
+                            }
+                            data.time.autoUpdate()
+                        }
+                    }
+                }
+            } catch (ex: Exception) {
+                GeekRewardPlus.say("计时线程出现异常")
+                ex.printStackTrace()
+            }
+        }
+    }
+    fun getTodayStartTime(): Long {
+        //设置时区
+        val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"))
+        calendar[Calendar.HOUR_OF_DAY] = 24
+        calendar[Calendar.MINUTE] = 0
+        calendar[Calendar.SECOND] = 0
+        return calendar.timeInMillis
     }
 
     private fun loadFile(index: String, out: ConfigFile, isReload: Boolean = false) {
@@ -69,7 +118,7 @@ object RewardManager {
                     if (isReload) {
                         timeConfigCache.removeIf { it.id == id }
                     }
-                    timeConfigCache.add(RewardConfig(id, ExpIryBuilder(value), info, require))
+                    timeConfigCache.add(RewardConfig(id, ExpIryBuilder(value, false), info, require))
                 }
             }
         }

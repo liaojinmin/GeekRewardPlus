@@ -1,8 +1,6 @@
 package me.geek.reward.menu
 
-import me.geek.GeekRewardPlus
-import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
+import me.geek.reward.GeekRewardPlus
 import taboolib.library.xseries.XMaterial
 import taboolib.module.chat.colored
 import taboolib.module.configuration.Config

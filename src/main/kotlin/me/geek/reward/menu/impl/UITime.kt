@@ -1,5 +1,6 @@
 package me.geek.reward.menu.impl
 
+import me.geek.reward.GeekRewardPlus
 import me.geek.reward.api.RewardConfig
 import me.geek.reward.api.RewardManager
 import me.geek.reward.api.data.ExpIryBuilder
@@ -46,11 +47,6 @@ fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) 
                         .replace("{now_value}", data.time.getExpiryFormat())
                         .replace("{state}", state)
 
-                    // 添加配置包描述
-                  //  e.info.forEach {
-                   //     lore.add(it.replacePlaceholder(player))
-                    //}
-
                     // 添加图标描述
                     icon.lore.forEach {
                         if (it.contains("{info}")) {
@@ -72,17 +68,18 @@ fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) 
         }
 
 
-        onClick { _, element ->
-
+        onClick { event, element ->
+            val player = event.clicker
+            GeekRewardPlus.debug("time ac: ${data.time.millis} >= ${element.value.millis}")
             if (data.time.millis >= element.value.millis) {
                 if (data.pointsKey.find { it == element.id } != null) {
-                    KetherAPI.instantKether(this@openTimeUI, element.require.achieve)
+                    KetherAPI.instantKether(this@openTimeUI, element.require.achieve.replacePlaceholder(player))
                 } else {
                     // 允许领取
                     data.pointsKey.add(element.id)
-                    KetherAPI.instantKether(this@openTimeUI, element.require.allow)
+                    KetherAPI.instantKether(this@openTimeUI, element.require.allow.replacePlaceholder(player))
                 }
-            } else KetherAPI.instantKether(this@openTimeUI, element.require.deny)
+            } else KetherAPI.instantKether(this@openTimeUI, element.require.deny.replacePlaceholder(player))
         }
 
 
@@ -97,7 +94,7 @@ fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) 
                         customModelData = icon.model
                         hideAll()
                     }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
                         if (hasPreviousPage()) {
                             page(page-1)
                             openInventory(build())
@@ -111,7 +108,7 @@ fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) 
                         customModelData = icon.model
                         hideAll()
                     }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
                         if (hasPreviousPage()) {
                             page(page+1)
                             openInventory(build())
@@ -126,7 +123,7 @@ fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) 
                         lore.addAll(icon.lore.replacePlaceholder(this@openTimeUI))
                         customModelData = icon.model
                     }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
                     }
                 }
             }

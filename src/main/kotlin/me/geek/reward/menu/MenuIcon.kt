@@ -1,9 +1,7 @@
 package me.geek.reward.menu
 
-import me.geek.reward.SetTings
-import org.bukkit.entity.Player
+
 import taboolib.library.xseries.XMaterial
-import taboolib.platform.compat.replacePlaceholder
 
 /**
  * 作者: 老廖

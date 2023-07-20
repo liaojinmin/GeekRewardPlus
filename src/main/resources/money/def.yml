@@ -19,7 +19,7 @@ money:
 
       # 允许领取的时候点击执行的动作
       allow:
-        - "command 'give {player_name} DIAMOND 10' as console"
+        - "command 'give %player_name% DIAMOND 10' as console"
         - "tell '成功领取累计 1500金币 的礼包..'"
         - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"
 
@@ -47,7 +47,7 @@ money:
 
       # 允许领取的时候点击执行的动作
       allow:
-        - "command 'give {player_name} DIAMOND 32' as console"
-        - "command 'give {player_name} NETHERITE_INGOT 3' as console"
+        - "command 'give %player_name% DIAMOND 32' as console"
+        - "command 'give %player_name% NETHERITE_INGOT 3' as console"
         - "tell '成功领取累计 10000金币 的礼包..'"
         - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"

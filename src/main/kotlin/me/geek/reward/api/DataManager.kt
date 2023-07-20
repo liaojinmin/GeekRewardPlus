@@ -1,10 +1,10 @@
 package me.geek.reward.api
 
 import com.google.gson.GsonBuilder
-import me.geek.GeekRewardPlus
+import me.geek.reward.GeekRewardPlus
 import me.geek.reward.SetTings
-import me.geek.reward.api.DataManager.updateByTask
-import me.geek.reward.api.DataManager.wantBasicDataByTask
+import me.geek.reward.api.data.BoardData
+import me.geek.reward.api.data.ExpIryBuilder
 import me.geek.reward.api.data.PlayerData
 import me.geek.reward.service.*
 import org.bukkit.entity.Player
@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets
 import java.sql.Connection
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @作者: 老廖
@@ -25,22 +26,25 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object DataManager {
 
-
     /**
      * 数据表名
      */
     private const val bal: String = "player_rw_data"
 
-
     /**
      * 数据变动任务
      */
-    private var refreshTask: PlatformExecutor.PlatformTask? = null
+    private var dataRefreshTask: PlatformExecutor.PlatformTask? = null
+
+    /**
+     * 排行榜变动任务
+     */
+    private var boardRefreshTask: PlatformExecutor.PlatformTask? = null
 
     /**
      * 带处理的任务
      */
-    private val refreshCache: MutableList<Any> = mutableListOf()
+    private val refreshCache: CopyOnWriteArrayList<Any> = CopyOnWriteArrayList();
 
     /**
      * 玩家数据缓存
@@ -53,6 +57,13 @@ object DataManager {
      * 名称 映射
      */
     private val dataCache2: MutableMap<String, PlayerData> = ConcurrentHashMap()
+
+    /**
+     * 排行榜缓存
+     */
+    val boardByPointsCache: MutableMap<Int, BoardData<Int>> = ConcurrentHashMap()
+    val boardByMoneyCache: MutableMap<Int, BoardData<Int>> = ConcurrentHashMap()
+    val boardByTimeCache: MutableMap<Int, BoardData<ExpIryBuilder>> = ConcurrentHashMap()
 
     /**
      * sql 实现
@@ -74,30 +85,49 @@ object DataManager {
 
     fun start() {
         sqlImpl.start()
-        refreshTask?.cancel()
-        refreshTask = submitAsync(delay = 20, period = 5) {
+        dataRefreshTask?.cancel()
+        dataRefreshTask = submitAsync(delay = 20, period = 1) {
             try {
-                val a = refreshCache.listIterator()
-                while (a.hasNext()) {
-                    when (val pack = a.next()) {
+                if (refreshCache.isNotEmpty()) {
+                    when (val task = refreshCache.removeAt(0)) {
                         is PlayerData -> {
-                            sqlImpl.update(pack)
+                            sqlImpl.update(task)
                             GeekRewardPlus.debug("task is PlayerData ")
-                            a.remove()
                         }
                         is Player -> {
-                            val data = sqlImpl.select(pack.uniqueId, pack.name)
+                            val data = sqlImpl.select(task.uniqueId, task.name)
                             dataCache[data.uuid] = data
                             dataCache2[data.name] = data
+                            GeekRewardPlus.debug("player time ${data.time.millis} ")
                             GeekRewardPlus.debug("task is Player ")
-                            a.remove()
                         }
-                        else -> { a.remove() }
+                        else -> {GeekRewardPlus.debug("task is 未知")}
                     }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
+        }
+        boardRefreshTask?.cancel()
+        boardRefreshTask = submitAsync(true, delay = 40, period = SetTings.setConfig.boardTime * 20L) {
+            val data = sqlImpl.select()
+            // 排序 点券
+            data.sortBy { it.points }
+            data.forEachIndexed { index, playerData ->
+                boardByPointsCache[index] = BoardData(playerData.uuid, playerData.name, playerData.points)
+            }
+            // 排序 金币
+            data.sortBy { it.money }
+            data.forEachIndexed { index, playerData ->
+                boardByMoneyCache[index] = BoardData(playerData.uuid, playerData.name, playerData.money)
+            }
+            // 排序 在线时间
+            data.sortBy { it.time.millis }
+            data.forEachIndexed { index, playerData ->
+                boardByTimeCache[index] = BoardData(playerData.uuid, playerData.name, playerData.time)
+            }
+            // 没什么屌用？？？？
+            data.clear()
         }
     }
 
@@ -231,6 +261,33 @@ object DataManager {
                 }
             } else error("无法连接到数据库")
             return data!!
+        }
+
+        /**
+         * 默认查询当前时间往前 10天的变动数据
+         */
+        fun select(time: Long = System.currentTimeMillis() - (864000 * 1000)): MutableList<PlayerData> {
+            val data = mutableListOf<PlayerData>()
+            if (dataSub.isActive) {
+                getConnection {
+                    prepareStatement("select `data` from $bal where `time` <= ? LIMIT 1000;").actions {
+                        it.setLong(1, time)
+                        val res = it.executeQuery()
+                        val gson = GsonBuilder()
+                            .setExclusionStrategies(Exclude())
+                            .create()
+                        while (res.next()) {
+                            data.add(
+                                gson.fromJson(
+                                    res.getBytes("data").toString(StandardCharsets.UTF_8),
+                                    PlayerData::class.java
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+            return data
         }
     }
     private enum class SqlTab(val tab: String) {

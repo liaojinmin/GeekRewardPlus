@@ -1,7 +1,7 @@
 package me.geek.reward
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
-import me.geek.GeekRewardPlus
+import me.geek.reward.api.DataManager
 import me.geek.reward.api.DataManager.getBasicData
 import org.bukkit.entity.Player
 
@@ -21,16 +21,15 @@ class Placeholder : PlaceholderExpansion() {
     // %GeekReward_timeTop_amt_1%
     // %GeekReward_timeTop_name_1%
     override fun onPlaceholderRequest(player: Player, params: String): String {
-        val uuid = player.name
         if (params.contains("Top")) {
             val index = params.filter { it.isDigit() }.toInt()
             return when (params) {
-                "pointsTop_amt_$index" ->  "暂无"
-                "pointsTop_name_$index" ->  "暂无"
-                "moneyTop_amt_$index" ->  "暂无"
-                "moneyTop_name_$index" ->  "暂无"
-                "timeTop_amt_$index" ->  "暂无"
-                "timeTop_name_$index" -> "暂无"
+                "pointsTop_amt_$index" -> DataManager.boardByPointsCache[index]?.value?.toString() ?: "0"
+                "pointsTop_name_$index" -> DataManager.boardByPointsCache[index]?.name ?: "暂无"
+                "moneyTop_amt_$index" -> DataManager.boardByMoneyCache[index]?.value?.toString() ?: "0"
+                "moneyTop_name_$index" -> DataManager.boardByMoneyCache[index]?.name ?: "暂无"
+                "timeTop_amt_$index" -> DataManager.boardByTimeCache[index]?.value?.getExpiryFormat() ?: "暂无"
+                "timeTop_name_$index" -> DataManager.boardByTimeCache[index]?.name ?: "暂无"
                 else -> "错误参数"
             }
         }

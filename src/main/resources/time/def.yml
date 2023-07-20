@@ -19,7 +19,7 @@ time:
 
       # 允许领取的时候点击执行的动作
       allow:
-        - "command 'give {player_name} DIAMOND 1' as console"
+        - "command 'give %player_name% DIAMOND 1' as console"
         - "tell '成功领取累计在线 10 分钟奖励..'"
         - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"
   # 这个奖励包的 唯一ID，，储存在数据库
@@ -42,6 +42,6 @@ time:
 
       # 允许领取的时候点击执行的动作
       allow:
-        - "command 'money give {player_name} 100' as console"
+        - "command 'money give %player_name% 100' as console"
         - "tell '成功领取累计在线 30 分钟奖励..'"
         - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"

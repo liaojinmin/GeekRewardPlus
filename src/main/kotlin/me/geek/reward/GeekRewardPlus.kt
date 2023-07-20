@@ -1,18 +1,23 @@
-package me.geek
+package me.geek.reward
 
-import me.geek.reward.SetTings
-import me.geek.reward.Placeholder
 import me.geek.reward.api.RewardManager
 import me.geek.reward.api.DataManager
 import me.geek.reward.menu.Menu
 import org.bukkit.Bukkit
+import taboolib.common.LifeCycle
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
+import taboolib.common.platform.Awake
 import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.console
+import taboolib.common.platform.function.submitAsync
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
  * 作者: 老廖
@@ -27,6 +32,8 @@ import taboolib.platform.BukkitPlugin
 object GeekRewardPlus : Plugin() {
 
     val instance by lazy { BukkitPlugin.getInstance() }
+
+    private val url = URL("https://raw.githubusercontent.com/liaojinmin/GeekCosmeticsWiki/master/version.txt")
 
     const val version = "2.0"
 
@@ -82,13 +89,44 @@ object GeekRewardPlus : Plugin() {
 
 
     fun say(msg: String) {
-        console().sendMessage("§8[§eGeek§6Reward§ePlus§8] ${msg.replace("&", "§")}")
+        console().sendMessage("§8[§bGeekRewardPlus§8] ${msg.replace("&", "§")}")
     }
 
 
     fun debug(msg: String) {
         if (SetTings.deBug) {
-            console().sendMessage("§8[§6GeekRewardPlus§8]§8[§cDeBug§8]§7 ${msg.replace("&", "§")}")
+            console().sendMessage("§8[§eGeekRewardPlus§8]§8[§cDeBug§8]§7 ${msg.replace("&", "§")}")
         }
+    }
+
+    @Awake(LifeCycle.ACTIVE)
+    fun checkUp() {
+        if (SetTings.checkUpdate) {
+            submitAsync {
+                say("&bUPDATE &8| &3正在检查版本更新...")
+                val now = version.filter { it.isDigit() }.toInt()
+                val new = getVersion()?.filter { it.isDigit() }?.toInt() ?: now
+                debug("&bUPDATE &8| &c$now vs &a$new")
+                if (new > now) {
+                    say("&bUPDATE &8| &3有新版本可用: &a$new &3当前版本: $now, 通过下方链接下载!")
+                    say("&f https://www.mcbbs.net/thread-1450734-1-1.html")
+                } else {
+                    say("&bUPDATE &8| &3当前已是最新版本...")
+                }
+            }
+        }
+    }
+
+    private fun getVersion(): String? {
+        var connection: HttpURLConnection? = null
+        try {
+            connection = url.openConnection() as HttpURLConnection
+            connection.connectTimeout = 5000
+            return BufferedReader(InputStreamReader(connection.inputStream)).readLine()
+        } catch (ignored: Throwable) {
+        } finally {
+            connection?.disconnect()
+        }
+        return null
     }
 }

@@ -23,3 +23,14 @@ data_storage:
   已领取: '&a已领取'
   可领取: '&a可领取'
   不可领取: '&c不可领取'
+set:
+  # 是否关闭 点券 的自动累计 （如果关闭 则需要管理员手动给与累计计数）
+  closePoints: false
+  # 是否关闭 金币 的自动累计 （如果关闭 则需要管理员手动给与累计计数）
+  closeMoney: false
+  # 是否关闭 在线时间 的自动累计 （如果关闭 则需要管理员手动给与累计计数）
+  closeTime: false
+  # 是否将在线时间设置为每日重置，如果填写 false 则是永久累计
+  timeReset: false
+  # 排行榜更新间隔 (秒)
+  boardTime: 600

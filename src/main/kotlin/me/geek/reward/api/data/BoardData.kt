@@ -7,10 +7,8 @@ import java.util.UUID
  * @时间: 2023/7/16 17:28
  * @包: me.geek.reward.api
  */
-data class BoardData(
+data class BoardData<T>(
     val uuid: UUID,
     val name: String,
-    val time: String,
-    val money: String,
-    val points: String
+    val value: T,
 )

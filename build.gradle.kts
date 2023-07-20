@@ -17,7 +17,6 @@ taboolib {
         "module-ui",
         "module-kether",
         "module-metrics",
-        "expansion-command-helper"
     )
     description {
         bukkitApi("1.13")
@@ -28,12 +27,15 @@ taboolib {
             name("PlayerPoints").optional(true)
             name("PlaceholderAPI").optional(true)
             name("Vault").optional(true)
+            name("XConomy").optional(true)
+            name("GeekEconomy").optional(true)
+            name("CMI").optional(true)
         }
     }
 
     relocate("com.zaxxer.hikari", "com.zaxxer.hikari_4_0_3_rw")
     classifier = null
-    version = "6.0.11-13"
+    version = "6.0.11-18"
 }
 
 repositories {
@@ -45,15 +47,14 @@ repositories {
     maven("https://repo.rosewooddev.io/repository/public/")
     maven("https://repo.opencollab.dev/maven-snapshots/")
     maven("https://jitpack.io")
-    maven {
-        url = uri("http://ptms.ink:8081/repository/releases/")
-        isAllowInsecureProtocol = true
-    }
+
 }
 
 
 dependencies {
 
+    // Libraries
+    compileOnly(fileTree("lib"))
     compileOnly(kotlin("stdlib"))
     // Server Core
     compileOnly("com.github.YiC200333:XConomyAPI:2.19.1")
@@ -66,7 +67,5 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.10.9") { isTransitive = false }
     compileOnly("com.github.MilkBowl:VaultAPI:-SNAPSHOT") { isTransitive = false }
     compileOnly("org.black_ixx:playerpoints:3.1.1") { isTransitive = false }
-    // Libraries
-    compileOnly(fileTree("lib"))
 }
 

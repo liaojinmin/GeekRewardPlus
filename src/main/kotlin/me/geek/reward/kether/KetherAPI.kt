@@ -1,6 +1,6 @@
 package me.geek.reward.kether
 
-import me.geek.GeekRewardPlus
+import me.geek.reward.GeekRewardPlus
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common5.mirrorNow

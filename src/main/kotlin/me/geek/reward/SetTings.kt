@@ -1,9 +1,6 @@
 package me.geek.reward
 
-import me.geek.GeekRewardPlus
 import me.geek.reward.service.ConfigSql
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.module.chat.colored
@@ -43,6 +40,7 @@ object SetTings {
             deBug = config.getBoolean("debug", false)
             checkUpdate = config.getBoolean("checkUpdate", true)
             configSql = config.getObject("data_storage", false)
+            setConfig = config.getObject("set", false)
             try {
                 State.Received.dis = config.getString("状态信息.已领取", "§a已领取")!!.colored()
                 State.Available.dis = config.getString("状态信息.可领取", "§a可领取")!!.colored()
@@ -53,16 +51,18 @@ object SetTings {
             configSql.sqlite = BukkitPlugin.getInstance().dataFolder
         }
     }
-    class SetConfig(
-       // val visibleByDistance: Double = 32.0,
+    data class SetConfig(
+        val closePoints: Boolean = false,
+        val closeMoney: Boolean = false,
+        val closeTime: Boolean = false,
+        val timeReset: Boolean = false,
+        val boardTime: Int = 600
     )
 
     enum class State(var dis: String) {
         Received("§a已领取"),
 
-
         Available("§a可领取"),
-
 
         NotAvailable("§c不可领取")
     }

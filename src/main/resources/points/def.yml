@@ -21,7 +21,7 @@ points:
 
       # 允许领取的时候点击执行的动作
       allow:
-        - "command 'money give {player_name} 1000' as console"
+        - "command 'money give %player_name% 1000' as console"
         - "tell '成功领取累计充值 100 点券礼包...'"
         - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"
   # 这个奖励包的 唯一ID，，储存在数据库
@@ -46,6 +46,6 @@ points:
 
       # 允许领取的时候点击执行的动作
       allow:
-        - "command 'money give {player_name} 1000' as console"
+        - "command 'money give %player_name% 1000' as console"
         - "tell '成功领取累计充值 100 点券礼包...'"
         - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"
