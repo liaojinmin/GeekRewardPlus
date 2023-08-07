@@ -124,6 +124,7 @@ object GeekRewardPlus : Plugin() {
             connection.connectTimeout = 5000
             return BufferedReader(InputStreamReader(connection.inputStream)).readLine()
         } catch (ignored: Throwable) {
+            say("&bUPDATE &8| &e网络异常，无法获取更新信息...")
         } finally {
             connection?.disconnect()
         }

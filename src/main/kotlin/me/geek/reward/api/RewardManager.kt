@@ -95,6 +95,7 @@ object RewardManager {
     private fun loadFile(index: String, out: ConfigFile, isReload: Boolean = false) {
         out.getConfigurationSection(index)!!.getKeys(false).forEach { id ->
             val key = "$index.$id"
+            val priority = out.getInt("$key.priority")
             val value = out.getString("$key.value") ?: "0"
             val info = out.getStringList("$key.info").colored()
             val achieve = out.getStringList("$key.Require.achieve").joinToString("\n").colored()
@@ -106,19 +107,22 @@ object RewardManager {
                     if (isReload) {
                         pointsConfigCache.removeIf { it.id == id }
                     }
-                    pointsConfigCache.add(RewardConfig(id, value.toInt(), info, require))
+                    pointsConfigCache.add(RewardConfig(id, priority, value.toInt(), info, require))
+                    pointsConfigCache.sortBy { it.priority }
                 }
                 "money" -> {
                     if (isReload) {
                         moneyConfigCache.removeIf { it.id == id }
                     }
-                    moneyConfigCache.add(RewardConfig(id, value.toInt(), info, require))
+                    moneyConfigCache.add(RewardConfig(id, priority, value.toInt(), info, require))
+                    moneyConfigCache.sortBy { it.priority }
                 }
                 "time" -> {
                     if (isReload) {
                         timeConfigCache.removeIf { it.id == id }
                     }
-                    timeConfigCache.add(RewardConfig(id, ExpIryBuilder(value, false), info, require))
+                    timeConfigCache.add(RewardConfig(id, priority, ExpIryBuilder(value, false), info, require))
+                    timeConfigCache.sortBy { it.priority }
                 }
             }
         }

@@ -1,6 +1,7 @@
 time:
   # 这个奖励包的 唯一ID，，储存在数据库
   10分钟奖励包:
+    priority: 1 # GUI 排序
     # 这个奖励包需要 在线 多久获得 （1h = 一小时) (30s = 30秒) （30m = 30分钟）
     value: 10m
     # 在 GUI 中显示的奖励信息
@@ -24,6 +25,7 @@ time:
         - "sound ENTITY_EXPERIENCE_ORB_PICKUP by 1 1"
   # 这个奖励包的 唯一ID，，储存在数据库
   30分钟奖励包:
+    priority: 1 # GUI 排序
     # 这个奖励包需要 在线 多久获得 （1h = 一小时) (30s = 30秒) （30m = 30分钟）
     value: 30m
     # 在 GUI 中显示的奖励信息

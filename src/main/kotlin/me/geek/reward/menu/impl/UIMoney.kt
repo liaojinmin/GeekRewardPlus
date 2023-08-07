@@ -13,6 +13,7 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
 import taboolib.platform.compat.replacePlaceholder
 import taboolib.platform.util.buildItem
+import taboolib.platform.util.serializeToByteArray
 
 /**
  * @作者: 老廖

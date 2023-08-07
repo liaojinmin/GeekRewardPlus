@@ -10,6 +10,7 @@ import me.geek.reward.api.data.ExpIryBuilder
  */
 data class RewardConfig<T>(
     val id: String,
+    val priority: Int = 0,
     val value: T,
     val info: List<String> = mutableListOf(),
     val require: RewardRequire = RewardRequire()
