@@ -35,6 +35,8 @@ object SetTings {
 
     var checkUpdate: Boolean = true
 
+
+
     private fun onLoadSetTings() {
         measureTimeMillis {
             deBug = config.getBoolean("debug", false)

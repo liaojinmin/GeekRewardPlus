@@ -7,11 +7,11 @@ data_storage:
   # 数据库 KEY 模式 高版本、正版服建议 UUID
   keyModule: UUID
   mysql:
-    host: '192.168.0.102'
+    host: '127.0.0.1'
     port: 3306
-    database: 'testrw'
+    database: 'server_reward'
     username: 'root'
-    password: 'Liao17303069590'
+    password: 'liao17303069590'
     params: '?autoReconnect=true&useSSL=false'
   hikari_settings:
     maximum_pool_size: 10
@@ -33,6 +33,6 @@ set:
   # 是否关闭 在线时间 的自动累计 （如果关闭 则需要管理员手动给与累计计数）
   closeTime: false
   # 是否将在线时间设置为每日重置，如果填写 false 则是永久累计
-  timeReset: false
+  timeReset: true
   # 排行榜更新间隔 (秒)
   boardTime: 600

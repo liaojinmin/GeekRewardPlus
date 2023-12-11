@@ -1,5 +1,6 @@
 package me.geek.reward.api
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.geek.reward.GeekRewardPlus
 import me.geek.reward.SetTings
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.service.PlatformExecutor
 import java.nio.charset.StandardCharsets
@@ -73,7 +75,9 @@ object DataManager {
     @SubscribeEvent
     fun onJoin(e: PlayerJoinEvent) {
         // 在数据库线程查询数据
-        refreshCache.add(e.player)
+        submit(delay = 60) {
+            refreshCache.add(e.player)
+        }
     }
 
     @SubscribeEvent
@@ -109,25 +113,23 @@ object DataManager {
             }
         }
         boardRefreshTask?.cancel()
-        boardRefreshTask = submitAsync(true, delay = 40, period = SetTings.setConfig.boardTime * 20L) {
+        boardRefreshTask = submitAsync(delay = 40, period = SetTings.setConfig.boardTime * 20L) {
             val data = sqlImpl.select()
             // 排序 点券
-            data.sortBy { it.points }
+            data.sortByDescending { it.points }
             data.forEachIndexed { index, playerData ->
-                boardByPointsCache[index] = BoardData(playerData.uuid, playerData.name, playerData.points)
+                boardByPointsCache[index+1] = BoardData(playerData.uuid, playerData.name, playerData.points)
             }
             // 排序 金币
-            data.sortBy { it.money }
+            data.sortByDescending { it.money }
             data.forEachIndexed { index, playerData ->
-                boardByMoneyCache[index] = BoardData(playerData.uuid, playerData.name, playerData.money)
+                boardByMoneyCache[index+1] = BoardData(playerData.uuid, playerData.name, playerData.money)
             }
             // 排序 在线时间
-            data.sortBy { it.time.millis }
+            data.sortByDescending { it.time.millis }
             data.forEachIndexed { index, playerData ->
-                boardByTimeCache[index] = BoardData(playerData.uuid, playerData.name, playerData.time)
+                boardByTimeCache[index+1] = BoardData(playerData.uuid, playerData.name, playerData.time)
             }
-            // 没什么屌用？？？？
-            data.clear()
         }
     }
 
@@ -263,19 +265,16 @@ object DataManager {
             return data!!
         }
 
-        /**
-         * 默认查询当前时间往前 10天的变动数据
+        /*
+        修复根据时间戳找数据的问题，导致新服无法获取数据，或无法获取最新数据
          */
-        fun select(time: Long = System.currentTimeMillis() - (864000 * 1000)): MutableList<PlayerData> {
+        fun select(): MutableList<PlayerData> {
             val data = mutableListOf<PlayerData>()
+            val gson = GsonBuilder().setExclusionStrategies(Exclude()).create()
             if (dataSub.isActive) {
                 getConnection {
-                    prepareStatement("select `data` from $bal where `time` <= ? LIMIT 1000;").actions {
-                        it.setLong(1, time)
+                    prepareStatement("select `data` from $bal LIMIT 1000;").actions {
                         val res = it.executeQuery()
-                        val gson = GsonBuilder()
-                            .setExclusionStrategies(Exclude())
-                            .create()
                         while (res.next()) {
                             data.add(
                                 gson.fromJson(

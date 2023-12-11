@@ -35,7 +35,7 @@ object GeekRewardPlus : Plugin() {
 
     private val url = URL("https://raw.githubusercontent.com/liaojinmin/GeekRewardPlus/GeekRewardPlus-V2/version.txt")
 
-    const val version = "2.1"
+    const val version = "2.2"
 
     override fun onLoad() {
         Metrics(16328, version, Platform.BUKKIT)

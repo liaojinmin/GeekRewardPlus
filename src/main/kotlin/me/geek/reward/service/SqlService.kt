@@ -1,5 +1,6 @@
 package me.geek.reward.service
 
+import me.geek.reward.GeekRewardPlus
 import java.sql.Connection
 import java.sql.SQLException
 
@@ -29,9 +30,12 @@ abstract class SqlService {
     }
     fun testSql(): Boolean {
         return try {
+            GeekRewardPlus.debug("尝试链接数据库...")
             getConnection()
             true
-        } catch (_: SQLException) {
+        } catch (e: SQLException) {
+            e.printStackTrace()
+            GeekRewardPlus.debug("    数据库链接失败...")
             false
         }
     }
