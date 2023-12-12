@@ -1,5 +1,5 @@
 
-Loaded-Config: '&8[&6GeekReward&ePlus&8] &7加载配置文件... &8(&7耗时 &f{0} &7Ms)'
-Open-Menu-Err: '&8[&6GeekReward&ePlus&8] &c不存在 &f{0} &c菜单，请检查语法'
-time-reset: '&8[&6GeekReward&ePlus&8] &a你的累计在线奖励已重置'
-Data-Add-value: '&8[&6GeekReward&ePlus&8] &7为玩家 &f{0} &f{1} &f{2} &f{3}'
+Loaded-Config: '&8[&6NeonReward&ePlus&8] &7加载配置文件... &8(&7耗时 &f{0} &7Ms)'
+Open-Menu-Err: '&8[&6NeonReward&ePlus&8] &c不存在 &f{0} &c菜单，请检查语法'
+time-reset: '&8[&6NeonReward&ePlus&8] &a你的累计在线奖励已重置'
+Data-Add-value: '&8[&6NeonReward&ePlus&8] &7为玩家 &f{0} &f{1} &f{2} &f{3}'
